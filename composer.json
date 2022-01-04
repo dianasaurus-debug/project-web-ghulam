@@ -14,8 +14,10 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.4",
         "laravel/framework": "^8.40",
+        "laravel/sanctum": "^2.13",
         "laravel/tinker": "^2.5",
         "league/glide-laravel": "^1.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "tightenco/ziggy": "^0.8.0"
     },
     "require-dev": {
@@ -30,7 +32,11 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php",
+            "config/constants.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -3,21 +3,19 @@
     <h1 class="mb-8 font-bold text-3xl">Users</h1>
     <div class="mb-6 flex justify-between items-center">
       <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">
-        <label class="block text-gray-700">Role:</label>
-        <select v-model="form.role" class="mt-1 w-full form-select">
-          <option :value="null" />
-          <option value="user">User</option>
-          <option value="owner">Owner</option>
-        </select>
-        <label class="mt-4 block text-gray-700">Trashed:</label>
-        <select v-model="form.trashed" class="mt-1 w-full form-select">
-          <option :value="null" />
-          <option value="with">With Trashed</option>
-          <option value="only">Only Trashed</option>
-        </select>
+          <div v-if="$page.props.auth.user.role==1">
+              <label class="block text-gray-700">Role:</label>
+              <select v-model="form.role" class="mt-1 w-full form-select">
+                  <option :value="null">Semua Role</option>
+                  <option value="1">Pemilik</option>
+                  <option value="2">Admin</option>
+                  <option value="3">Customer</option>
+              </select>
+          </div>
+
       </search-filter>
-      <inertia-link class="btn-indigo" :href="route('users.create')">
-        <span>Create</span>
+      <inertia-link class="btn-green" :href="route('users.create')">
+        <span>Buat</span>
         <span class="hidden md:inline">User</span>
       </inertia-link>
     </div>
@@ -30,10 +28,9 @@
         </tr>
         <tr v-for="user in users" :key="user.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
           <td class="border-t">
-            <inertia-link class="px-6 py-4 flex items-center focus:text-indigo-500" :href="route('users.edit', user.id)">
+            <inertia-link class="px-6 py-4 flex items-center focus:text-green-500" :href="route('users.edit', user.id)">
               <img v-if="user.photo" class="block w-5 h-5 rounded-full mr-2 -my-2" :src="user.photo" />
               {{ user.name }}
-              <icon v-if="user.deleted_at" name="trash" class="flex-shrink-0 w-3 h-3 fill-gray-400 ml-2" />
             </inertia-link>
           </td>
           <td class="border-t">
@@ -43,7 +40,7 @@
           </td>
           <td class="border-t">
             <inertia-link class="px-6 py-4 flex items-center" :href="route('users.edit', user.id)" tabindex="-1">
-              {{ user.owner ? 'Owner' : 'User' }}
+              {{ roles[user.role-1] }}
             </inertia-link>
           </td>
           <td class="border-t w-px">
@@ -81,10 +78,10 @@ export default {
   },
   data() {
     return {
+      roles : ['Pemilik', 'Admin', 'Customer'],
       form: {
         search: this.filters.search,
         role: this.filters.role,
-        trashed: this.filters.trashed,
       },
     }
   },
