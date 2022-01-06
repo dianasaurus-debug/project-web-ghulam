@@ -52,9 +52,9 @@ class UsersController extends Controller
         return Inertia::render('Users/Create');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        Request::validate([
+        $request->validate([
             'first_name' => ['required', 'max:50'],
             'last_name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email', Rule::unique('users')],
@@ -65,16 +65,16 @@ class UsersController extends Controller
         ]);
 
         User::create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
-            'email' => Request::get('email'),
-            'password' => Request::get('password'),
-            'role' => Request::get('role'),
-            'phone' => Request::get('phone'),
-            'photo_path' => Request::file('photo') ? Request::file('photo')->store('users') : null,
+            'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'email' => $request->get('email'),
+            'password' => $request->get('password'),
+            'role' => $request->get('role'),
+            'phone' => $request->get('phone'),
+            'photo_path' => $request->file('photo') ? $request->file('photo')->store('users') : null,
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User berhasil dibuat!');
+        return redirect()->route('users')->with('success', 'User berhasil dibuat!');
     }
 
     public function edit(User $user)
@@ -92,13 +92,13 @@ class UsersController extends Controller
         ]);
     }
 
-    public function update(User $user)
+    public function update(Request $request, User $user)
     {
         if (App::environment('demo') && $user->isDemoUser()) {
             return Redirect::back()->with('error', 'Updating the demo user is not allowed.');
         }
 
-        Request::validate([
+        $request->validate([
             'first_name' => ['required', 'max:50'],
             'last_name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user->id)],
@@ -108,14 +108,14 @@ class UsersController extends Controller
             'phone' => ['required', Rule::unique('users')->ignore($user->id)],
         ]);
 
-        $user->update(Request::only('first_name', 'last_name', 'email', 'role', 'phone'));
+        $user->update(\Illuminate\Support\Facades\Request::only(['first_name', 'last_name', 'email', 'role', 'phone']));
 
-        if (Request::file('photo')) {
-            $user->update(['photo_path' => Request::file('photo')->store('users')]);
+        if ($request->file('photo')) {
+            $user->update(['photo_path' => $request->file('photo')->store('users')]);
         }
 
-        if (Request::get('password')) {
-            $user->update(['password' => Request::get('password')]);
+        if ($request->get('password')) {
+            $user->update(['password' => $request->get('password')]);
         }
         return redirect()->route('users')->with('success', 'User berhasil diupdate!');
     }

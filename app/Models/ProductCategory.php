@@ -14,4 +14,16 @@ class ProductCategory extends Model
     {
         return $this->hasMany(Product::class, 'category_id', 'id');
     }
+    public function scopeOrderById($query)
+    {
+        $query->orderBy('id');
+    }
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nama_kategori', 'like', '%'.$search.'%');
+            });
+        });
+    }
 }

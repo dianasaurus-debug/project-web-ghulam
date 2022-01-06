@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserCreditsController;
+use App\Http\Controllers\ProductCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('credits/edit/{user}', [UserCreditsController::class, 'edit'])->name('credits.edit');
 
     Route::resource('suppliers', SupplierController::class);
+    Route::resource('categories', ProductCategoryController::class);
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard')

@@ -104,7 +104,26 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $supplier = Supplier::where('id', $id)->first();
+            $request->validate([
+                'nama_supplier' => 'required|string',
+                'phone' => 'required|unique:suppliers',
+                'deskripsi' => 'required',
+                'email' => 'required|unique:suppliers',
+                'alamat' => 'required',
+            ]);
+            $supplier->update([
+                'nama_supplier' => $request->nama_supplier,
+                'phone' => $request->phone,
+                'deskripsi' => $request->deskripsi,
+                'email' => $request->email,
+                'alamat' => $request->alamat,
+            ]);
+            return redirect()->route('suppliers.index')->with('success', 'Suplier berhasil diupdate!');
+        } catch (\Exception $e) {
+            return redirect()->route('suppliers.index')->with('error', 'Suplier gagal diupdate! Error : ' . $e->getMessage());
+        }
     }
 
     /**

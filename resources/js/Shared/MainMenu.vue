@@ -30,6 +30,12 @@
               <div :class="isUrl('credits') ? 'text-white' : 'text-green-300 group-hover:text-white'">Saldo</div>
           </inertia-link>
       </div>
+      <div class="mb-4">
+          <inertia-link class="flex items-center group py-3" :href="route('categories.index')">
+              <icon name="store-front" class="w-4 h-4 mr-2" :class="isUrl('categories') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />
+              <div :class="isUrl('categories') ? 'text-white' : 'text-green-300 group-hover:text-white'">Kategori</div>
+          </inertia-link>
+      </div>
 <!--    <div class="mb-4">-->
 <!--      <inertia-link class="flex items-center group py-3" :href="route('reports')">-->
 <!--        <icon name="printer" class="w-4 h-4 mr-2" :class="isUrl('reports') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />-->

@@ -101,6 +101,7 @@ class ProductController extends Controller
             $kriteria_id_supplier = null;
             $kriteria_harga = Kriteria::where('kode', 'C3')->get();
             $kriteria_supplier = Kriteria::where('kode', 'C1')->get();
+            $kriteria_id_rating = Kriteria::where('kode', 'C2')->first();
             foreach ($kriteria_harga as $k){
                 if($product->harga_jual<=$k->interval_max&&$product->harga_jual>=$k->interval_min){
                     $kriteria_id_harga = $k->id;
@@ -123,6 +124,11 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'nilai' => count($all_product_supplier),
                     'kriteria_id' => $kriteria_id_supplier
+                ],
+                [
+                    'product_id' => $product->id,
+                    'nilai' => 0,
+                    'kriteria_id' => $kriteria_id_rating->id
                 ]
             ]);
             return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
@@ -246,5 +252,7 @@ class ProductController extends Controller
 
         }
     }
+
+
 
 }

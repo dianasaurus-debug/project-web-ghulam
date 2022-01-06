@@ -20,6 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/detail', [ProductController::class, 'product_detail']);
+Route::get('/products/recommendation', [ProductController::class, 'getRecommendation']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', [APIAuthController::class, 'profile']);
 //    Route::put('/update/profile', [APIAuthController::class, 'update']);

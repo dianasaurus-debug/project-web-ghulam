@@ -133,14 +133,20 @@ if (!function_exists('rangking')) {
     }
 }
 
-if (!function_exists('get_price_ranges')) {
-    function get_price_ranges($min_price, $max){
-        $arrNilaiPreferensi = (array) $nilaiPreferensi;
-        arsort($arrNilaiPreferensi);
-
-        foreach ($arrNilaiPreferensi as $key => $value) {
-            $rangking[] = $key;
+if (!function_exists('getKeterangan')) {
+    function getKeterangan($rentalKriteria){
+        foreach ($rentalKriteria as $key => $value) {
+            $relation[$value['product_id']][] = $value['kriteria'] ['keterangan'];
         }
-        return $rangking;
+        $index = 0;
+        foreach ($relation as $key => $value) {
+            if ($index == 0) {
+                for ($i=0; $i < count($value); $i++) {
+                    $keterangan[$i] = $value[$i];
+                }
+            }
+            $index++;
+        }
+        return $keterangan;
     }
 }
