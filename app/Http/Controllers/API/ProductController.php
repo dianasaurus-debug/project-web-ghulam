@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kriteria;
 use App\Models\KriteriaFuzzy;
 use App\Models\Product;
 use App\Models\ProductKriteria;
@@ -62,41 +63,50 @@ class ProductController extends Controller
         }
 
         public function getRecommendation(Request $request){
+            $input_supplier = $request->supplier; //diisi id dari kriteria
+            $input_rating = $request->rating; //diisi id dari kriteria
+            $input_harga = $request->harga; //diisi id dari kriteria
+            $array_of_inputs = array($input_supplier,$input_rating,$input_harga);
+            $input_kriteria_data = Kriteria::whereIn('id', $array_of_inputs)->with('kriteria_fuzzy')->get();
+            $used_inputs = array();
+            $products = Product::with('criterias.kriteria.kriteria_fuzzy')->get();
             $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')->with('product')->get();
             $matriks = array();
-            $matriks_ternormalisasi = array();
-            $kriteriaFuzzy = KriteriaFuzzy::all();
             $keterangan = getKeterangan($rentalKriteria);
-            foreach ($rentalKriteria as $kriteria){
-                array_push($matriks,
-                    [
-                        "product" => $kriteria->product_id,
-                        "kode" => $kriteria->kriteria->kode,
-                        "tfn" => array($kriteria->kriteria->kriteria_fuzzy->fuzzy_num_a,$kriteria->kriteria->kriteria_fuzzy->fuzzy_num_b,$kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c)
-                    ]
-                );
+            foreach ($products as $product){
+                $array_of_criterias = array();
+                foreach($product->criterias as $kriteria){
+                    $fuzzy_nums[0] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_a;
+                    $fuzzy_nums[1] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_b;
+                    $fuzzy_nums[2] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c;
+                    array_push($array_of_criterias, $fuzzy_nums);
+                }
+                $matriks[$product->id] = $array_of_criterias;
             }
-//            foreach ($rentalKriteria as $kriteria){
-//                $tfn = array($kriteria->kriteria->kriteria_fuzzy->fuzzy_num_a,$kriteria->kriteria->kriteria_fuzzy->fuzzy_num_b,$kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c);
-//                array_push($matriks_ternormalisasi,
-//                    [
-//                        "product" => $kriteria->product_id,
-//                        "kode" => $kriteria->kriteria->kode,
-//                        "ternormalisasi" => matrikTernormalisasi($tfn, $keterangan)
-//                    ]
-//                );
-//            }
-            $group = array();
-            foreach ( $matriks as $value ) {
-                $group[$value['product']][] = $value;
+            foreach ($input_kriteria_data as $input){
+                $fuzzy_nums[0] = $input->kriteria_fuzzy->fuzzy_num_a;
+                $fuzzy_nums[1] = $input->kriteria_fuzzy->fuzzy_num_b;
+                $fuzzy_nums[2] = $input->kriteria_fuzzy->fuzzy_num_c;
+                $used_inputs[] = $fuzzy_nums;
             }
-//            $group2 = array();
-//            foreach ( $matriks_ternormalisasi as $value ) {
-//                $group2[$value['product']][] = $value;
-//            }
+            $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan);
+            $matriks_terbobot = matrikTerbobot($matriks_ternormalisasi, $used_inputs);
+            $ideal_negatif = idealNegatif($matriks_terbobot);
+            $ideal_positif = idealPositif($matriks_terbobot);
+            $dplus = dPlus($matriks_terbobot, $ideal_positif);
+            $dmin = dMin($matriks_terbobot, $ideal_negatif);
             return [
-                'matriks' => $group,
-//                'matriks_ternormalisasi' => $group2
+                'bobot' => $used_inputs,
+                'keterangan' => $keterangan,
+                'matriks' => $matriks,
+                'matriks_normalisasi' => matrikTernormalisasi($matriks, $keterangan),
+                'matriks_terbobot' => matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs),
+                'ideal_negatif' => idealNegatif(matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs)),
+                'ideal_positif' => idealPositif(matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs)),
+                'dplus' => $dplus,
+                'dmin' => $dmin,
+                'preferensi' => nilaiPreferensi($dplus, $dmin),
+                'ranking' => rangking(nilaiPreferensi($dplus, $dmin))
             ];
         }
 }

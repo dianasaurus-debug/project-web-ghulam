@@ -13,6 +13,10 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
     }
+    public function criterias()
+    {
+        return $this->hasMany(ProductKriteria::class, 'product_id', 'id');
+    }
     public function orders()
     {
         return $this->belongsToMany(Order::class);

@@ -4,6 +4,7 @@ if (!function_exists('matrikTernormalisasi')) {
     function matrikTernormalisasi($matriks, $keterangan)
     {
         foreach ($matriks as $key => $a) {
+            $i=0;
             foreach ($a as $k => $b) {
                 $c_val[$k][] = $a[$k][2];
                 $a_val[$k][] = $a[$k][0];
@@ -15,16 +16,22 @@ if (!function_exists('matrikTernormalisasi')) {
                 if ($keterangan[$k] == 'benefit') {
                     $max_c = max($c_val[$k]);
                     $temp = $b;
-                    $b[0] = $temp[0] / $max_c;
-                    $b[1] = $temp[1] / $max_c;
-                    $b[2] = $temp[2] / $max_c;
-
+                    for($i=0;$i<=2;$i++){
+                        $b[$i] = $temp[$i] / $max_c;
+                    }
                 } else if ($keterangan[$k] == 'cost') {
                     $min_a = min($a_val[$k]);
                     $temp = $b;
-                    $b[0] = $min_a / $temp[2];
-                    $b[1] = $min_a / $temp[1];
-                    $b[2] = $min_a / $temp[0];
+                    if($min_a==0){
+                        $b[0] = $temp[2];
+                        $b[1] = $temp[1];
+                        $b[2] = $temp[0];
+                    } else {
+                            $b[0] = $min_a / $temp[2] == 0 ? 1 : $temp[2];
+                            $b[1] = $min_a / $temp[1] == 0 ? 1 : $temp[1];
+                            $b[2] = $min_a / $temp[0] == 0 ? 1 : $temp[0];
+                    }
+
                 }
             }
         }
@@ -140,7 +147,7 @@ if (!function_exists('getKeterangan')) {
         }
         $index = 0;
         foreach ($relation as $key => $value) {
-            if ($index == 0) {
+            if($index==0){
                 for ($i=0; $i < count($value); $i++) {
                     $keterangan[$i] = $value[$i];
                 }

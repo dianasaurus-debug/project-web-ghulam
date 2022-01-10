@@ -114,12 +114,8 @@ class ProductController extends Controller
                     break;
                 }
             }
+
             $kriteria_product = ProductKriteria::insert([
-                [
-                    'product_id' => $product->id,
-                    'nilai' => $product->harga_jual,
-                    'kriteria_id' => $kriteria_id_harga
-                ],
                 [
                     'product_id' => $product->id,
                     'nilai' => count($all_product_supplier),
@@ -129,7 +125,12 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'nilai' => 0,
                     'kriteria_id' => $kriteria_id_rating->id
-                ]
+                ],
+                [
+                    'product_id' => $product->id,
+                    'nilai' => $product->harga_jual,
+                    'kriteria_id' => $kriteria_id_harga
+                ],
             ]);
             return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
         } catch (\Exception $e) {
