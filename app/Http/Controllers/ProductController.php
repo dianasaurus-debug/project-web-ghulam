@@ -123,7 +123,7 @@ class ProductController extends Controller
                 ],
                 [
                     'product_id' => $product->id,
-                    'nilai' => 0,
+                    'nilai' => rand(1,5),
                     'kriteria_id' => $kriteria_id_rating->id
                 ],
                 [
