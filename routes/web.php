@@ -59,6 +59,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('credits/edit/{user}', [UserCreditsController::class, 'edit'])->name('credits.edit');
 
     Route::resource('suppliers', SupplierController::class);
+    Route::get('rekomendasi', [ProductController::class, 'index_category'])->name('rekomendasi.index');
+    Route::get('rekomendasi/hasil', [ProductController::class, 'result_category'])->name('rekomendasi.hasil');
+
     Route::resource('categories', ProductCategoryController::class);
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])

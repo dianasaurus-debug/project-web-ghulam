@@ -67,7 +67,7 @@ class ProductController extends Controller
             $input_rating = $request->rating; //diisi id dari kriteria
             $input_harga = $request->harga; //diisi id dari kriteria
             $array_of_inputs = array($input_supplier,$input_rating,$input_harga);
-            $input_kriteria_data = Kriteria::whereIn('id', $array_of_inputs)->with('kriteria_fuzzy')->get();
+            $input_kriteria_data = config('constants.bobot_user');
             $used_inputs = array();
             $products = Product::with('criterias.kriteria.kriteria_fuzzy')->get();
             $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')->with('product')->get();
@@ -83,11 +83,8 @@ class ProductController extends Controller
                 }
                 $matriks[$product->id] = $array_of_criterias;
             }
-            foreach ($input_kriteria_data as $input){
-                $fuzzy_nums[0] = $input->kriteria_fuzzy->fuzzy_num_a;
-                $fuzzy_nums[1] = $input->kriteria_fuzzy->fuzzy_num_b;
-                $fuzzy_nums[2] = $input->kriteria_fuzzy->fuzzy_num_c;
-                $used_inputs[] = $fuzzy_nums;
+            foreach ($array_of_inputs as $input){
+                        $used_inputs[] = $input_kriteria_data[$input];
             }
             $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan);
             $matriks_terbobot = matrikTerbobot($matriks_ternormalisasi, $used_inputs);

@@ -254,6 +254,64 @@ class ProductController extends Controller
         }
     }
 
+    public function index_category()
+    {
+        return Inertia::render('Rekomendasi/Index', [
+            'input_bobot' => config('constants.label_bobot'),
+        ]);
+    }
+
+    public function result_category(Request $request)
+    {
+        $input_supplier = $request->criteria_supplier; //diisi id dari kriteria
+        $input_rating = $request->criteria_rating; //diisi id dari kriteria
+        $input_harga = $request->criteria_harga; //diisi id dari kriteria
+        $array_of_inputs = array($input_supplier,$input_rating,$input_harga);
+        $input_kriteria_data = config('constants.bobot_user');
+        $lingustik_data = config('constants.code_bobot');
+        $linguistik_array = array();
+        $used_inputs = array();
+        $products = Product::with('criterias.kriteria.kriteria_fuzzy')->get();
+        $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')->with('product')->get();
+        $matriks = array();
+        $keterangan = getKeterangan($rentalKriteria);
+        foreach ($products as $product){
+            $array_of_criterias = array();
+            foreach($product->criterias as $kriteria){
+                $fuzzy_nums[0] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_a;
+                $fuzzy_nums[1] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_b;
+                $fuzzy_nums[2] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c;
+                array_push($array_of_criterias, $fuzzy_nums);
+            }
+            $matriks[$product->id] = $array_of_criterias;
+        }
+        foreach ($array_of_inputs as $input){
+            $used_inputs[] = $input_kriteria_data[$input];
+            $linguistik_array[] = $lingustik_data[$input];
+        }
+        $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan);
+        $matriks_terbobot = matrikTerbobot($matriks_ternormalisasi, $used_inputs);
+        $ideal_negatif = idealNegatif($matriks_terbobot);
+        $ideal_positif = idealPositif($matriks_terbobot);
+        $dplus = dPlus($matriks_terbobot, $ideal_positif);
+        $dmin = dMin($matriks_terbobot, $ideal_negatif);
+        return Inertia::render('Rekomendasi/Detail', [
+            'daftar_barang' => $products,
+            'bobot' => $used_inputs,
+            'linguistik' => $linguistik_array,
+            'keterangan' => $keterangan,
+            'matriks' => $matriks,
+            'matriks_ternormalisasi' => matrikTernormalisasi($matriks, $keterangan),
+            'matriks_terbobot' => matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs),
+            'ideal_negatif' => idealNegatif(matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs)),
+            'ideal_positif' => idealPositif(matrikTerbobot(matrikTernormalisasi($matriks, $keterangan), $used_inputs)),
+            'dplus' => $dplus,
+            'dmin' => $dmin,
+            'preferensi' => nilaiPreferensi($dplus, $dmin),
+            'ranking' => rangking(nilaiPreferensi($dplus, $dmin))
+        ]);
+    }
+
 
 
 }
