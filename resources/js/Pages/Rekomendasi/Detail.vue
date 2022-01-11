@@ -221,6 +221,7 @@
             <table class="w-full whitespace-nowrap">
                 <tr class="text-left font-bold">
                     <th class="px-6 pt-6 pb-4">Kode</th>
+                    <th class="px-6 pt-6 pb-4">Nama Produk</th>
                     <th class="px-6 pt-6 pb-4">D+</th>
                     <th class="px-6 pt-6 pb-4">D-</th>
                 </tr>
@@ -228,6 +229,11 @@
                     <td class="border-t">
                         <p class="px-6 py-4 flex items-center focus:text-green-500">
                             {{index}}
+                        </p>
+                    </td>
+                    <td class="border-t">
+                        <p class="px-6 py-4 flex items-center focus:text-green-500">
+                            {{get_product_name(index)}}
                         </p>
                     </td>
                     <td class="border-t">
@@ -247,13 +253,19 @@
             <table class="w-full whitespace-nowrap">
                 <tr class="text-left font-bold">
                     <th class="px-6 pt-6 pb-4">Kode</th>
+                    <th class="px-6 pt-6 pb-4">Nama Produk</th>
                     <th class="px-6 pt-6 pb-4">CCi</th>
                     <th class="px-6 pt-6 pb-4">Ranking-</th>
                 </tr>
-                <tr class="hover:bg-gray-100 focus-within:bg-gray-100" v-for="(product, key, index) in preferensi" >
+                <tr class="hover:bg-gray-100 focus-within:bg-gray-100" v-for="(product, key) in preferensi" >
                     <td class="border-t">
                         <p class="px-6 py-4 flex items-center focus:text-green-500">
                             {{key}}
+                        </p>
+                    </td>
+                    <td class="border-t">
+                        <p class="px-6 py-4 flex items-center focus:text-green-500">
+                            {{get_product_name(key)}}
                         </p>
                     </td>
                     <td class="border-t">
@@ -299,7 +311,7 @@ export default {
         dplus: Array,
         dmin: Array,
         preferensi: Array,
-        ranking: Array
+        ranking: Array,
     },
     methods: {
         get_rank(id){
@@ -309,6 +321,14 @@ export default {
                     return i;
                 }
             }
+        },
+        get_product_name(id){
+            for(var i=0;i<this.daftar_barang.length;i++){
+                if(this.daftar_barang[i].id==id){
+                    return this.daftar_barang[i].nama_barang;
+                }
+            }
+
         }
     },
 
