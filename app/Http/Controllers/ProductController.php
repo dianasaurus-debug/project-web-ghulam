@@ -99,9 +99,11 @@ class ProductController extends Controller
             $all_product_supplier = Product::where('supplier_id', $product->supplier_id)->get();
             $kriteria_id_harga = null;
             $kriteria_id_supplier = null;
+            $kriteria_id_rating = null;
             $kriteria_harga = Kriteria::where('kode', 'C3')->get();
             $kriteria_supplier = Kriteria::where('kode', 'C1')->get();
-            $kriteria_id_rating = Kriteria::where('kode', 'C2')->first();
+            $kriteria_rating = Kriteria::where('kode', 'C2')->get();
+            $random_rating = rand(1,5);
             foreach ($kriteria_harga as $k){
                 if($product->harga_jual<=$k->interval_max&&$product->harga_jual>=$k->interval_min){
                     $kriteria_id_harga = $k->id;
@@ -114,6 +116,12 @@ class ProductController extends Controller
                     break;
                 }
             }
+            foreach ($kriteria_rating as $k){
+                if($random_rating<=$k->interval_max&&$random_rating>=$k->interval_min){
+                    $kriteria_id_rating = $k->id;
+                    break;
+                }
+            }
 
             $kriteria_product = ProductKriteria::insert([
                 [
@@ -123,8 +131,8 @@ class ProductController extends Controller
                 ],
                 [
                     'product_id' => $product->id,
-                    'nilai' => rand(1,5),
-                    'kriteria_id' => $kriteria_id_rating->id
+                    'nilai' => $random_rating,
+                    'kriteria_id' => $kriteria_id_rating
                 ],
                 [
                     'product_id' => $product->id,
@@ -244,6 +252,8 @@ class ProductController extends Controller
             if (file_exists($image_path)) {
                 File::delete($image_path);
             }
+            $kategori_produk = ProductKriteria::where('product_id', $product->id)->get();
+            $kategori_produk->delete();
             $storagePath = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
             if (file_exists($storagePath.$product->gambar)) unlink($storagePath.$product->gambar);
             $product->delete();
@@ -289,7 +299,7 @@ class ProductController extends Controller
             $used_inputs[] = $input_kriteria_data[$input];
             $linguistik_array[] = $lingustik_data[$input];
         }
-        $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan);
+        $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan); //di helpers
         $matriks_terbobot = matrikTerbobot($matriks_ternormalisasi, $used_inputs);
         $ideal_negatif = idealNegatif($matriks_terbobot);
         $ideal_positif = idealPositif($matriks_terbobot);

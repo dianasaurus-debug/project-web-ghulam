@@ -38,7 +38,6 @@
 
 <script>
 import Logo from '@/Shared/Logo'
-import TextInput from '@/Shared/TextInput'
 import LoadingButton from '@/Shared/LoadingButton'
 import Layout from "../../Shared/Layout";
 import SelectInput from "../../Shared/SelectInput";

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Product;
+
 if (!function_exists('matrikTernormalisasi')) {
     function matrikTernormalisasi($matriks, $keterangan)
     {
@@ -123,7 +125,11 @@ if (!function_exists('dMin')) {
 if (!function_exists('nilaiPreferensi')) {
     function nilaiPreferensi($dPlus, $dMin){
         foreach ($dMin as $key => $value) {
-            $nilaiPreferensi[$key] = $value / ($value + $dPlus[$key]);
+            if($value==0){
+                $nilaiPreferensi[$key] = 0;
+            } else {
+                $nilaiPreferensi[$key] = $value / ($value + $dPlus[$key]);
+            }
         }
         return $nilaiPreferensi;
     }
