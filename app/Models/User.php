@@ -19,7 +19,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function generateOTP()
+    {
+        $this->timestamps = false;
+        $this->otp_code = rand(100000, 999999);
+        $this->otp_expires_at = now()->addMinutes(10);
+        $this->save();
+    }
 
+    public function resetOTP()
+    {
+        $this->timestamps = false;
+        $this->otp_code = null;
+        $this->otp_expires_at = null;
+        $this->save();
+    }
 
     public function getNameAttribute()
     {

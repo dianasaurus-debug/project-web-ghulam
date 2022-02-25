@@ -7,6 +7,7 @@ use App\Models\Kriteria;
 use App\Models\KriteriaFuzzy;
 use App\Models\Product;
 use App\Models\ProductKriteria;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -20,11 +21,33 @@ class ProductController extends Controller
         {
             try {
                 $all_products = Product::with('category')
+                    ->with('criterias')
                     ->get();
                 $data = array(
                     'status' => 'success',
                     'message' => 'Berhasil menampilkan data products',
                     'data' => $all_products,
+                );
+                return response()->json($data);
+            } catch (\Exception $exception) {
+                $data = array(
+                    [
+                        'status' => 'error',
+                        'message' => 'Terjadi kesalahan : '.$exception->getMessage()
+                    ]
+                );
+                return response()->json($data);
+            }
+        }
+
+        public function index_categories(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
+        {
+            try {
+                $all_categories = ProductCategory::get();
+                $data = array(
+                    'status' => 'success',
+                    'message' => 'Berhasil menampilkan data kategori',
+                    'data' => $all_categories,
                 );
                 return response()->json($data);
             } catch (\Exception $exception) {

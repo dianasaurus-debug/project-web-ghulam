@@ -22,6 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/detail', [ProductController::class, 'product_detail']);
 Route::get('/products/recommendation', [ProductController::class, 'getRecommendation']);
+Route::get('/products/categories', [ProductController::class, 'index_categories']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', [APIAuthController::class, 'profile']);
@@ -32,3 +33,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::post('/register', [APIAuthController::class, 'register']);
 //API route for login user
 Route::post('/login', [APIAuthController::class, 'login']);
+Route::put('/verify/otp', [APIAuthController::class, 'verify_otp']);
+Route::put('/resend/otp', [APIAuthController::class, 'resend']);
