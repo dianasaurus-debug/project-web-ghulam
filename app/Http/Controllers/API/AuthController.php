@@ -145,12 +145,13 @@ class AuthController extends Controller
                 ->firstOrFail();
             if($user)
             {
-                if(Carbon::parse($user->otp_expires_at)>Carbon::now()){
+                if(Carbon::parse($user->otp_expires_at)->format('Y-m-d H:i:s')<Carbon::now()->format('Y-m-d H:i:s')){
                     return response()
                         ->json([
                             'success' => false,
                             'is_verified' => false,
                             'times_up' => true,
+                            'now' => Carbon::parse($user->otp_expires_at)->format('Y-m-d H:i:s'),
                             'message' => 'Kode OTP sudah kadaluarsa',
                         ]);
                 } else {

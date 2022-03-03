@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -23,7 +24,7 @@ class User extends Authenticatable
     {
         $this->timestamps = false;
         $this->otp_code = rand(100000, 999999);
-        $this->otp_expires_at = now()->addMinutes(10);
+        $this->otp_expires_at = Carbon::now()->addMinutes(10);
         $this->save();
     }
 
