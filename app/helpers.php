@@ -24,15 +24,9 @@ if (!function_exists('matrikTernormalisasi')) {
                 } else if ($keterangan[$k] == 'cost') {
                     $min_a = min($a_val[$k]);
                     $temp = $b;
-                    if($min_a==0){
-                        $b[0] = $temp[2];
-                        $b[1] = $temp[1];
-                        $b[2] = $temp[0];
-                    } else {
-                            $b[0] = $min_a / $temp[2] == 0 ? 1 : $temp[2];
-                            $b[1] = $min_a / $temp[1] == 0 ? 1 : $temp[1];
-                            $b[2] = $min_a / $temp[0] == 0 ? 1 : $temp[0];
-                    }
+                    $b[0] = $min_a / $temp[2];
+                    $b[1] = $min_a / $temp[1];
+                    $b[2] = $min_a / $temp[0];
 
                 }
             }
@@ -138,7 +132,6 @@ if (!function_exists('rangking')) {
     function rangking($nilaiPreferensi){
         $arrNilaiPreferensi = (array) $nilaiPreferensi;
         arsort($arrNilaiPreferensi);
-
         foreach ($arrNilaiPreferensi as $key => $value) {
             $rangking[] = $key;
         }

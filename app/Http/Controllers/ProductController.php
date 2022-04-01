@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kriteria;
+use App\Models\LetakBarang;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductKriteria;
@@ -25,7 +26,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $all_products = Product::with('category')
+        $all_products = Product::with('category')->with('letak')
             ->orderByName()
             ->filter(\Illuminate\Support\Facades\Request::only(['search', 'category', 'harga', 'stock']))
             ->paginate(10)
@@ -52,6 +53,10 @@ class ProductController extends Controller
                 ->get()
                 ->map
                 ->only('id', 'nama_kategori'),
+            'letak' => LetakBarang::orderBy('name')
+                ->get()
+                ->map
+                ->only('id', 'name'),
             'suppliers' => Supplier::get()
                 ->map
                 ->only('id', 'nama_supplier'),
@@ -75,6 +80,7 @@ class ProductController extends Controller
                 'harga_jual' => 'required',
                 'category_id' => 'required',
                 'supplier_id' => 'required',
+                'letak_id' => 'required',
                 'kode_barang' => 'required|string|unique:products',
                 'stok' => 'required',
             ]);
@@ -92,6 +98,7 @@ class ProductController extends Controller
                 'added_by' => Auth::user()->id,
                 'kode_barang' => $request->kode_barang,
                 'stok' => $request->stok,
+                'letak_id' => $request->letak_id,
                 'qr_code' => $request->kode_barang . '.png',
                 'presentase_keuntungan' => $presentase_keuntungan,
                 'gambar' => $request->file('gambar') ? $request->file('gambar')->store('products') : null,
@@ -100,7 +107,9 @@ class ProductController extends Controller
             $kriteria_id_harga = null;
             $kriteria_id_supplier = null;
             $kriteria_id_rating = null;
-            $kriteria_harga = Kriteria::where('kode', 'C3')->get();
+            $kriteria_harga = Kriteria::where('kode', 'C3')
+                ->where('category_id', $request->category_id)
+                ->get();
             $kriteria_supplier = Kriteria::where('kode', 'C1')->get();
             $kriteria_rating = Kriteria::where('kode', 'C2')->get();
             $random_rating = rand(1,5);
@@ -122,7 +131,6 @@ class ProductController extends Controller
                     break;
                 }
             }
-
             $kriteria_product = ProductKriteria::insert([
                 [
                     'product_id' => $product->id,
@@ -140,6 +148,15 @@ class ProductController extends Controller
                     'kriteria_id' => $kriteria_id_harga
                 ],
             ]);
+            foreach ($all_product_supplier as $product) {
+                ProductKriteria::where('product_id', $product->id)
+                    ->whereHas('kriteria', function($q){
+                        $q->where('kode', 'C1');
+                    })->update([
+                        'nilai' => count($all_product_supplier),
+                        'kriteria_id' => $kriteria_id_supplier
+                    ]);
+            }
             return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->route('products.index')->with('error', 'Produk gagal ditambahkan! Error : ' . $e->getMessage());
@@ -170,6 +187,10 @@ class ProductController extends Controller
             $product->gambar = $product->gambar ? URL::route('image', ['path' => $product->gambar, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null;
             return Inertia::render('Products/Edit', [
                 'product' => $product,
+                'letak' => LetakBarang::orderBy('name')
+                    ->get()
+                    ->map
+                    ->only('id', 'name'),
                 'suppliers' => Supplier::get()
                     ->map
                     ->only('id', 'nama_supplier'),
@@ -192,18 +213,20 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $product = Product::where('id', $id)->first();
+        $request->validate([
+            'nama_barang' => 'required|string',
+            'harga_beli' => 'required',
+            'deskripsi' => 'required',
+            'harga_jual' => 'required',
+            'category_id' => 'required',
+            'supplier_id' => 'required',
+            'letak_id' => 'required',
+            'kode_barang' => ['required', 'string', Rule::unique('products')->ignore($product->id)],
+            'stok' => 'required',
+        ]);
         try {
-            $product = Product::where('id', $id)->first();
-            $request->validate([
-                'nama_barang' => 'required|string',
-                'harga_beli' => 'required',
-                'deskripsi' => 'required',
-                'harga_jual' => 'required',
-                'category_id' => 'required',
-                'supplier_id' => 'required',
-                'kode_barang' => ['required', 'string', Rule::unique('products')->ignore($product->id)],
-                'stok' => 'required',
-            ]);
+
             if ($request->kode_barang != $product->kode_barang) {
                 $image_path = public_path("/qr_codes/" . $product->qr_code);
                 if (file_exists($image_path)) {
@@ -221,12 +244,48 @@ class ProductController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'harga_beli' => $request->harga_beli,
                 'category_id' => $request->category_id,
+                'letak_id' => $request->letak_id,
                 'supplier_id' => $request->supplier_id,
                 'added_by' => Auth::user()->id,
                 'kode_barang' => $request->kode_barang,
                 'presentase_keuntungan' => $presentase_keuntungan,
                 'stok' => $request->stok,
             ]);
+            $kriteria_harga = Kriteria::where('kode', 'C3')
+                ->where('category_id', $request->category_id)
+                ->get();
+            $kriteria_supplier = Kriteria::where('kode', 'C1')->get();
+            $all_product_supplier = Product::where('supplier_id', $product->supplier_id)->get();
+            foreach ($kriteria_harga as $k){
+                if($product->harga_jual<=$k->interval_max&&$product->harga_jual>=$k->interval_min){
+                    $kriteria_id_harga = $k->id;
+                    break;
+                }
+            }
+            foreach ($kriteria_supplier as $k){
+                if(count($all_product_supplier)<=$k->interval_max&&count($all_product_supplier)>=$k->interval_min){
+                    $kriteria_id_supplier = $k->id;
+                    break;
+                }
+            }
+            $kriteria_product_harga = ProductKriteria::where('product_id', $product->id)
+                ->whereHas('kriteria', function($q){
+                    $q->where('kode', 'C3');
+                })->update(
+                    [
+                        'product_id' => $product->id,
+                        'nilai' => $product->harga_jual,
+                        'kriteria_id' => $kriteria_id_harga
+                    ]
+                );
+            $kriteria_product_supplier = ProductKriteria::where('product_id', $product->id)
+                ->whereHas('kriteria', function($q){
+                    $q->where('kode', 'C1');
+                })->update([
+                    'product_id' => $product->id,
+                    'nilai' => count($all_product_supplier),
+                    'kriteria_id' => $kriteria_id_supplier
+                ]);
             if ($request->file('gambar')) {
                 $storagePath = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
                 if (file_exists($storagePath.$product->gambar)) unlink($storagePath.$product->gambar);
@@ -256,7 +315,25 @@ class ProductController extends Controller
             $kategori_produk->delete();
             $storagePath = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
             if (file_exists($storagePath.$product->gambar)) unlink($storagePath.$product->gambar);
+            $supplier_id = $product->supplier_id;
             $product->delete();
+            $all_product_supplier = Product::where('supplier_id', $supplier_id)->get();
+            $kriteria_supplier = Kriteria::where('kode', 'C1')->get();
+            foreach ($kriteria_supplier as $k){
+                if(count($all_product_supplier)<=$k->interval_max&&count($all_product_supplier)>=$k->interval_min){
+                    $kriteria_id_supplier = $k->id;
+                    break;
+                }
+            }
+            foreach ($all_product_supplier as $p) {
+                ProductKriteria::where('product_id', $p->id)
+                    ->whereHas('kriteria', function($q){
+                        $q->where('kode', 'C1');
+                    })->update([
+                        'nilai' => count($all_product_supplier),
+                        'kriteria_id' => $kriteria_id_supplier
+                    ]);
+            }
             return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
         } catch (\Exception $exception) {
             return redirect()->route('products.index')->with('error', 'Produk gagal dihapus! Error : ' . $exception->getMessage());
@@ -267,6 +344,7 @@ class ProductController extends Controller
     public function index_category()
     {
         return Inertia::render('Rekomendasi/Index', [
+            'categories' => ProductCategory::all(),
             'input_bobot' => config('constants.label_bobot'),
         ]);
     }
@@ -276,13 +354,21 @@ class ProductController extends Controller
         $input_supplier = $request->criteria_supplier; //diisi id dari kriteria
         $input_rating = $request->criteria_rating; //diisi id dari kriteria
         $input_harga = $request->criteria_harga; //diisi id dari kriteria
+        $input_kategori = $request->category_id;
         $array_of_inputs = array($input_supplier,$input_rating,$input_harga);
         $input_kriteria_data = config('constants.bobot_user');
         $lingustik_data = config('constants.code_bobot');
         $linguistik_array = array();
         $used_inputs = array();
-        $products = Product::with('criterias.kriteria.kriteria_fuzzy')->get();
-        $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')->with('product')->get();
+        $products = Product::with('criterias.kriteria.kriteria_fuzzy')
+            ->where('category_id', $input_kategori)
+            ->get();
+        $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')
+            ->whereHas('kriteria', function($q) use($input_kategori){
+                $q->whereRaw('(CASE kode WHEN "C3" THEN category_id = \''.$input_kategori.'\' ELSE category_id is null END)');
+            })
+            ->with('product')
+            ->get();
         $matriks = array();
         $keterangan = getKeterangan($rentalKriteria);
         foreach ($products as $product){
@@ -293,6 +379,7 @@ class ProductController extends Controller
                 $fuzzy_nums[2] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c;
                 array_push($array_of_criterias, $fuzzy_nums);
             }
+
             $matriks[$product->id] = $array_of_criterias;
         }
         foreach ($array_of_inputs as $input){

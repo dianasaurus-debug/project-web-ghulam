@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserCreditsController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\LetakBarangController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('credits', [UserCreditsController::class, 'store'])->name('credits.store');
     Route::get('credits/create', [UserCreditsController::class, 'create'])->name('credits.create');
     Route::get('credits/edit/{user}', [UserCreditsController::class, 'edit'])->name('credits.edit');
+    Route::resource('letak-barang', LetakBarangController::class);
 
     Route::resource('suppliers', SupplierController::class);
     Route::get('rekomendasi', [ProductController::class, 'index_category'])->name('rekomendasi.index');

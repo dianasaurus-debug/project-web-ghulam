@@ -18,6 +18,7 @@ class CreateKriteriasTable extends Migration
             $table->string('kode');
             $table->string('nama');
             $table->string('satuan');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->enum('keterangan', ['cost', 'benefit']);;
             $table->string('himpunan');
             $table->double('interval_min');

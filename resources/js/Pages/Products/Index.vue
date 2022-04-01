@@ -36,8 +36,9 @@
           <th class="px-6 pt-6 pb-4">Nama</th>
           <th class="px-6 pt-6 pb-4">Harga Beli</th>
           <th class="px-6 pt-6 pb-4">Harga Jual</th>
-          <th class="px-6 pt-6 pb-4">Kode Barang</th>
+          <th class="px-6 pt-6 pb-4">Kode</th>
             <th class="px-6 pt-6 pb-4">Kategori</th>
+            <th class="px-6 pt-6 pb-4">Letak</th>
             <th class="px-6 pt-6 pb-4">Stok</th>
         </tr>
         <tr v-for="product in products.data" :key="product.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
@@ -64,6 +65,11 @@
             <td class="border-t">
                 <inertia-link class="px-6 py-4 flex items-center" :href="route('products.edit', product.id)" tabindex="-1">
                     {{ product.category.nama_kategori }}
+                </inertia-link>
+            </td>
+            <td class="border-t">
+                <inertia-link class="px-6 py-4 flex items-center" :href="route('products.edit', product.id)" tabindex="-1">
+                    {{ product.letak.name }}
                 </inertia-link>
             </td>
             <td class="border-t">

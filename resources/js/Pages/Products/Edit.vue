@@ -20,6 +20,13 @@
                             {{ category.nama_kategori }}
                         </option>
                     </select-input>
+                    <select-input v-model="form.letak_id" :error="form.errors.letak_id"
+                                  class="pr-6 pb-8 w-full lg:w-1/2" label="Letak Barang">
+                        <option :value="null">Pilih Letak</option>
+                        <option v-for="le in letak" :key="le.id" :value="le.id">
+                            {{ le.name }}
+                        </option>
+                    </select-input>
                     <select-input v-model="form.supplier_id" :error="form.errors.supplier_id"
                                   class="pr-6 pb-8 w-full lg:w-1/2" label="Suplier">
                         <option :value="null">Pilih Suplier</option>
@@ -37,8 +44,13 @@
                                    class="pr-6 pb-8 w-full lg:w-1/2" label="Deskripsi Barang"/>
                     <text-input v-model="presentase_keuntungan" aria-readonly="true"
                                 class="pr-6 pb-8 w-full lg:w-1/2" label="Presentase Keuntungan"/>
-                    <file-input v-model="form.gambar" :error="form.errors.gambar" class="pr-6 pb-8 w-full lg:w-1/2"
-                                type="file" accept="image/*" label="Gambar Produk"/>
+                    <div class="flex flex-col pr-6 pb-8 w-full lg:w-1/2">
+                        <file-input v-model="form.gambar" :error="form.errors.gambar" class="pr-6 pb-8 w-full lg:w-1/2"
+                                    type="file" accept="image/*" label="Gambar Produk"/>
+                        <div>
+                            <img v-bind:src="product.gambar">
+                        </div>
+                    </div>
                     <div class="flex flex-col pr-6 pb-8 w-full lg:w-1/2">
                         <div class="mb-2">
                             <h6 class="font-bold">QR Code Barang</h6>
@@ -47,14 +59,7 @@
                             <img width="200px" v-bind:src="'/qr_codes/'+product.qr_code">
                         </div>
                     </div>
-                    <div class="flex flex-col pr-6 pb-8 w-full lg:w-1/2">
-                        <div class="mb-2">
-                            <h6 class="font-bold">Gambar barang</h6>
-                        </div>
-                        <div>
-                            <img :src="product.gambar">
-                        </div>
-                    </div>
+
 
                 </div>
                 <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex items-center">
@@ -95,6 +100,7 @@ export default {
         product: Object,
         categories: Array,
         suppliers: Array,
+        letak: Array
     },
     remember: 'form',
     data() {
@@ -111,7 +117,7 @@ export default {
                 category_id: this.product.category_id,
                 supplier_id: this.product.supplier_id,
                 gambar: null,
-
+                letak_id : null,
             }),
         }
     },

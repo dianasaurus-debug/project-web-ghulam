@@ -127,7 +127,7 @@ class KriteriaFuzzySeeder extends Seeder
         KriteriaFuzzy::insert([
             [
                 'id_kriteria' => 1,
-                'fuzzy_num_a' => 0.0,
+                'fuzzy_num_a' => 0.1,
                 'fuzzy_num_b' => 0.1,
                 'fuzzy_num_c' => 0.3,
             ],
@@ -161,7 +161,7 @@ class KriteriaFuzzySeeder extends Seeder
         KriteriaFuzzy::insert([
             [
                 'id_kriteria' => 6,
-                'fuzzy_num_a' => 0.0,
+                'fuzzy_num_a' => 0.1,
                 'fuzzy_num_b' => 0.1,
                 'fuzzy_num_c' => 0.3,
             ],

@@ -19,6 +19,13 @@
                             {{ category.nama_kategori }}
                         </option>
                     </select-input>
+                    <select-input v-model="form.letak_id" :error="form.errors.letak_id"
+                                  class="pr-6 pb-8 w-full lg:w-1/2" label="Letak Barang">
+                        <option :value="null">Pilih Letak</option>
+                        <option v-for="le in letak" :key="le.id" :value="le.id">
+                            {{ le.name }}
+                        </option>
+                    </select-input>
                     <select-input v-model="form.supplier_id" :error="form.errors.supplier_id"
                                   class="pr-6 pb-8 w-full lg:w-1/2" label="Suplier">
                         <option :value="null">Pilih Suplier</option>
@@ -34,10 +41,10 @@
                                 class="pr-6 pb-8 w-full lg:w-1/2" label="Harga Jual"/>
                     <TextareaInput v-model="form.deskripsi" :error="form.errors.deskripsi"
                                    class="pr-6 pb-8 w-full lg:w-1/2" label="Deskripsi Barang"/>
-                    <file-input v-model="form.gambar" :error="form.errors.gambar" class="pr-6 pb-8 w-full lg:w-1/2"
-                                type="file" accept="image/*" label="Gambar Produk"/>
                     <text-input v-model="presentase_keuntungan" aria-readonly="true"
                                 class="pr-6 pb-8 w-full lg:w-1/2" label="Presentase Keuntungan"/>
+                    <file-input v-model="form.gambar" :error="form.errors.gambar" class="pr-6 pb-8 w-full lg:w-1/2"
+                                type="file" accept="image/*" label="Gambar Produk"/>
 
                 </div>
                 <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex justify-end items-center">
@@ -70,6 +77,7 @@ export default {
     props: {
         categories: Array,
         suppliers: Array,
+        letak: Array
     },
     remember: 'form',
     data() {
@@ -81,6 +89,7 @@ export default {
                 harga_jual: null,
                 deskripsi: null,
                 stok: null,
+                letak_id : null,
                 category_id: null,
                 supplier_id: null,
                 gambar: null
@@ -89,7 +98,7 @@ export default {
     },
     computed : {
         presentase_keuntungan() {
-            if(this.form.harga_jual==null&&this.form.harga_beli==null){
+            if(this.form.harga_jual==null||this.form.harga_jual==0&&this.form.harga_beli==null||this.form.harga_beli==0){
                 return 0;
             } else {
                 return (((this.form.harga_jual-this.form.harga_beli)/this.form.harga_beli)*100).toFixed(2);

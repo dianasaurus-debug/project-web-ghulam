@@ -26,6 +26,10 @@ class Product extends Model
     {
         return $this->hasOne(Cart::class);
     }
+    public function letak()
+    {
+        return $this->belongsTo(LetakBarang::class, 'letak_id', 'id');
+    }
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

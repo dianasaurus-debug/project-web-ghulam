@@ -35,7 +35,7 @@ import LoadingButton from '@/Shared/LoadingButton'
 import FileInput from '@/Shared/FileInput'
 
 export default {
-    metaInfo: {title: 'Tambah Produk'},
+    metaInfo: {title: 'Tambah Supplier'},
     components: {
         LoadingButton,
         SelectInput,

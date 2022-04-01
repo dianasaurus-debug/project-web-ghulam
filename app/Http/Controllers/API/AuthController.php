@@ -82,7 +82,7 @@ class AuthController extends Controller
             if($user->is_verified == null){
                 return response()
                     ->json([
-                        'success' => true,
+                        'success' => false,
                         'is_verified' => false,
                         'message' => 'Mohon verifikasi E-Mail Anda terlebih dahulu!',
                     ]);
@@ -226,7 +226,7 @@ class AuthController extends Controller
                 ]);
         }
         try {
-            $user = auth()->user();
+            $user = User::where('id', auth()->user()->id)->with('saldo')->first();
             return response()
                 ->json([
                     'success' => true,

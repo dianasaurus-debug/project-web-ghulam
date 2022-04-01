@@ -37,6 +37,12 @@
           </inertia-link>
       </div>
       <div class="mb-4">
+          <inertia-link class="flex items-center group py-3" :href="route('letak-barang.index')">
+              <icon name="store-front" class="w-4 h-4 mr-2" :class="isUrl('letak-barang') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />
+              <div :class="isUrl('letak-barang') ? 'text-white' : 'text-green-300 group-hover:text-white'">Letak Barang</div>
+          </inertia-link>
+      </div>
+      <div class="mb-4">
           <inertia-link class="flex items-center group py-3" :href="route('rekomendasi.index')">
               <icon name="store-front" class="w-4 h-4 mr-2" :class="isUrl('rekomendasi') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />
               <div :class="isUrl('rekomendasi') ? 'text-white' : 'text-green-300 group-hover:text-white'">Rekomendasi</div>

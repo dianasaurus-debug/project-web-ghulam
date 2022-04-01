@@ -11,12 +11,13 @@
                 <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
                     <text-input v-model="form.nama_kategori" :error="form.errors.nama_kategori"
                                 class="pr-6 pb-8 w-full lg:w-1/2" label="Nama Kategori"/>
-                </div>
-                <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
-                    <text-input v-model="form.min_harga" :error="form.errors.min_harga"
-                                class="pr-6 pb-8 w-full lg:w-1/2" label="Min Harga"/>
-                    <text-input v-model="form.max_harga" :error="form.errors.max_harga"
-                                class="pr-6 pb-8 w-full lg:w-1/2" label="Max Harga"/>
+                    <select-input v-model="form.letak_id" :error="form.errors.letak_id"
+                                  class="pr-6 pb-8 w-full lg:w-1/2" label="Letak Kategori">
+                        <option :value="null">Pilih Letak</option>
+                        <option v-for="le in letak" :key="le.id" :value="le.id">
+                            {{ le.name }}
+                        </option>
+                    </select-input>
                 </div>
 
                 <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex items-center">
@@ -52,6 +53,7 @@ export default {
     layout: Layout,
     props: {
         categories: Object,
+        letak : Array,
     },
     remember: 'form',
     data() {
@@ -60,8 +62,6 @@ export default {
                 _method: 'PUT',
                 letak_id : this.categories.letak_id,
                 nama_kategori: this.categories.nama_kategori,
-                min_harga : this.categories.min_harga,
-                max_harga : this.categories.max_harga,
             }),
         }
     },

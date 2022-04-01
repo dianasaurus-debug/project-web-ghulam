@@ -24,8 +24,8 @@ class KriteriaFuzzyHargaCoba extends Seeder
                 'satuan' => 'RP',
                 'keterangan' => 'cost',
                 'himpunan' => 'Murah',
-                'interval_min' => 0,
-                'interval_max' => 1,
+                'interval_min' => 1000,
+                'interval_max' => 5000,
             ],
             [
                 'id' => 12,
@@ -34,8 +34,8 @@ class KriteriaFuzzyHargaCoba extends Seeder
                 'satuan' => 'RP',
                 'keterangan' => 'cost',
                 'himpunan' => 'Cukup Murah',
-                'interval_min' => 1.1,
-                'interval_max' => 2,
+                'interval_min' => 5001,
+                'interval_max' => 10000,
             ],
             [
                 'id' => 13,
@@ -44,8 +44,8 @@ class KriteriaFuzzyHargaCoba extends Seeder
                 'satuan' => 'RP',
                 'keterangan' => 'cost',
                 'himpunan' => 'Sedang',
-                'interval_min' => 2.1,
-                'interval_max' => 3,
+                'interval_min' => 10001,
+                'interval_max' => 15000,
             ],
             [
                 'id' => 14,
@@ -54,8 +54,8 @@ class KriteriaFuzzyHargaCoba extends Seeder
                 'satuan' => 'RP',
                 'keterangan' => 'cost',
                 'himpunan' => 'Mahal',
-                'interval_min' => 3.1,
-                'interval_max' => 4,
+                'interval_min' => 15001,
+                'interval_max' => 20000,
             ],
             [
                 'id' => 15,
@@ -64,8 +64,8 @@ class KriteriaFuzzyHargaCoba extends Seeder
                 'satuan' => 'RP',
                 'keterangan' => 'cost',
                 'himpunan' => 'Sangat Mahal',
-                'interval_min' => 4.1,
-                'interval_max' => 5,
+                'interval_min' => 20001,
+                'interval_max' => 50000,
             ],
         ]);
 
@@ -73,7 +73,7 @@ class KriteriaFuzzyHargaCoba extends Seeder
         KriteriaFuzzy::insert([
             [
                 'id_kriteria' => 11,
-                'fuzzy_num_a' => 0.0,
+                'fuzzy_num_a' => 0.1,
                 'fuzzy_num_b' => 0.1,
                 'fuzzy_num_c' => 0.3,
             ],

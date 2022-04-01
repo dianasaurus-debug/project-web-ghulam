@@ -51,6 +51,11 @@ class User extends Authenticatable
         return $this->email === 'johndoe@example.com';
     }
 
+    public function saldo()
+    {
+        return $this->hasOne(Credit::class, 'user_id', 'id');
+    }
+
     public function scopeOrderByName($query)
     {
         $query->orderBy('last_name')->orderBy('first_name');

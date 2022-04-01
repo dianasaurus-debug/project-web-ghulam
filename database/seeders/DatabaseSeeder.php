@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UsersSeeder::class);
+        $this->call(LetakBarangSeeder::class);
+        $this->call(KriteriaFuzzySeeder::class);
+//        $this->call(KriteriaFuzzyHargaCoba::class);
         $this->call(ProductCategorySeeder::class);
     }
 }

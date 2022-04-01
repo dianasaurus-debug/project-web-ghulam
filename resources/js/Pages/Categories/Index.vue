@@ -14,6 +14,9 @@
         <tr class="text-left font-bold">
           <th class="px-6 pt-6 pb-4">ID</th>
           <th class="px-6 pt-6 pb-4">Nama</th>
+            <th class="px-6 pt-6 pb-4">Min harga</th>
+            <th class="px-6 pt-6 pb-4">Max harga</th>
+
         </tr>
         <tr v-for="category in categories.data" :key="category.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
           <td class="border-t">
@@ -26,6 +29,16 @@
                 {{ category.nama_kategori }}
             </inertia-link>
           </td>
+            <td class="border-t">
+                <inertia-link class="px-6 py-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
+                    {{ category.min_harga }}
+                </inertia-link>
+            </td>
+            <td class="border-t">
+                <inertia-link class="px-6 py-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
+                    {{ category.max_harga }}
+                </inertia-link>
+            </td>
           <td class="border-t w-px">
             <inertia-link class="px-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
               <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400" />

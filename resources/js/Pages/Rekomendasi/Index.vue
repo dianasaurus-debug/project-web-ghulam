@@ -5,6 +5,13 @@
                 <div class="px-10 py-12">
                     <h1 class="text-center font-bold text-3xl">Masukkan parameter</h1>
                     <div class="mx-auto mt-6 w-24 border-b-2" />
+                    <select-input v-model="form.category_id" :error="form.errors.category_id"
+                                  class="mt-6" label="Kategori Barang">
+                        <option :value="null">Pilih Kategori</option>
+                        <option v-for="(category, index) in categories" :key="index" :value="category.id">
+                            {{ category.nama_kategori }}
+                        </option>
+                    </select-input>
                     <select-input v-model="form.criteria_supplier" :error="form.errors.criteria_supplier"
                                   class="mt-6" label="Parameter supplier (C1)">
                         <option :value="null">Pilih kriteria</option>
@@ -51,8 +58,8 @@ export default {
     },
     props: {
         matriks: Array,
-        input_bobot: Array,
-
+        input_bobot: Object,
+        categories : Array
     },
     layout : Layout,
     data() {
@@ -61,6 +68,7 @@ export default {
                 criteria_supplier: null,
                 criteria_rating: null,
                 criteria_harga: null,
+                category_id : null
             }),
         }
     },
