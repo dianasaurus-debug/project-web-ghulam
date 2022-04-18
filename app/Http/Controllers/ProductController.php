@@ -363,11 +363,16 @@ class ProductController extends Controller
         $products = Product::with('criterias.kriteria.kriteria_fuzzy')
             ->where('category_id', $input_kategori)
             ->get();
+        $array_of_ids = [];
+        $i=0;
+        foreach ($products as $product){
+            $array_of_ids[$i] = $product->id;
+            $i++;
+        }
         $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')
-            ->whereHas('kriteria', function($q) use($input_kategori){
-                $q->whereRaw('(CASE kode WHEN "C3" THEN category_id = \''.$input_kategori.'\' ELSE category_id is null END)');
-            })
+            ->whereIn('product_id', $array_of_ids)
             ->with('product')
+            ->orderBy('product_id')
             ->get();
         $matriks = array();
         $keterangan = getKeterangan($rentalKriteria);

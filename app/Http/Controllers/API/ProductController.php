@@ -87,14 +87,29 @@ class ProductController extends Controller
 
         public function getRecommendation(Request $request){
             try {
-                $input_supplier = $request->supplier; //diisi id dari kriteria
-                $input_rating = $request->rating; //diisi id dari kriteria
-                $input_harga = $request->harga; //diisi id dari kriteria
+                $input_supplier = $request->criteria_supplier; //diisi id dari kriteria
+                $input_rating = $request->criteria_rating; //diisi id dari kriteria
+                $input_harga = $request->criteria_harga; //diisi id dari kriteria
+                $input_kategori = $request->category_id;
                 $array_of_inputs = array($input_supplier,$input_rating,$input_harga);
                 $input_kriteria_data = config('constants.bobot_user');
+                $lingustik_data = config('constants.code_bobot');
+                $linguistik_array = array();
                 $used_inputs = array();
-                $products = Product::with('criterias.kriteria.kriteria_fuzzy')->get();
-                $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')->with('product')->get();
+                $products = Product::with('criterias.kriteria.kriteria_fuzzy')
+                    ->where('category_id', $input_kategori)
+                    ->get();
+                $array_of_ids = [];
+                $i=0;
+                foreach ($products as $product){
+                    $array_of_ids[$i] = $product->id;
+                    $i++;
+                }
+                $rentalKriteria = ProductKriteria::with('kriteria.kriteria_fuzzy')
+                    ->whereIn('product_id', $array_of_ids)
+                    ->with('product')
+                    ->orderBy('product_id')
+                    ->get();
                 $matriks = array();
                 $keterangan = getKeterangan($rentalKriteria);
                 foreach ($products as $product){
@@ -105,10 +120,12 @@ class ProductController extends Controller
                         $fuzzy_nums[2] = $kriteria->kriteria->kriteria_fuzzy->fuzzy_num_c;
                         array_push($array_of_criterias, $fuzzy_nums);
                     }
+
                     $matriks[$product->id] = $array_of_criterias;
                 }
                 foreach ($array_of_inputs as $input){
                     $used_inputs[] = $input_kriteria_data[$input];
+                    $linguistik_array[] = $lingustik_data[$input];
                 }
                 $matriks_ternormalisasi =matrikTernormalisasi($matriks, $keterangan);
                 $matriks_terbobot = matrikTerbobot($matriks_ternormalisasi, $used_inputs);
@@ -135,6 +152,7 @@ class ProductController extends Controller
                 );
                 return response()->json($data);
             }
-
         }
+
+
 }
