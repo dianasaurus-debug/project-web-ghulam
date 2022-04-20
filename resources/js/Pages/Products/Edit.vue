@@ -110,8 +110,9 @@ export default {
     layout: Layout,
     props: {
         product: Object,
-        categories: Array,
+        categories: Object,
         suppliers: Array,
+        category_selected: Object,
         letak: Array
     },
     remember: 'form',
@@ -127,9 +128,10 @@ export default {
                 deskripsi: this.product.deskripsi,
                 stok: this.product.stok,
                 category_id: this.product.category_id,
+                category_primary_id: this.category_selected,
                 supplier_id: this.product.supplier_id,
                 gambar: null,
-                letak_id : null,
+                letak_id : this.product.letak_id,
             }),
         }
     },

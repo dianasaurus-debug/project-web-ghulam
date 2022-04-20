@@ -182,10 +182,12 @@ class ProductController extends Controller
     public function edit($id)
     {
         try {
-            $product = Product::where('id', $id)->first();
+            $product = Product::where('id', $id)->with('category')->first();
+            $category = ProductCategory::where('id', $product->category->category_id)->with('sub_categories')->first();
             $product->gambar = $product->gambar ? URL::route('image', ['path' => $product->gambar, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null;
             return Inertia::render('Products/Edit', [
                 'product' => $product,
+                'category_selected' => $category,
                 'letak' => LetakBarang::orderBy('name')
                     ->get()
                     ->map
@@ -193,7 +195,7 @@ class ProductController extends Controller
                 'suppliers' => Supplier::get()
                     ->map
                     ->only('id', 'nama_supplier'),
-                'categories' => ProductCategory::with('sub_categories')->orderBy('nama_kategori')
+                'categories' => ProductCategory::with('sub_categories')->orderBy('nama_kategori')->get()
 
             ]);
         } catch (\Exception $e) {
