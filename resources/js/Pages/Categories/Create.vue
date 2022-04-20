@@ -9,13 +9,24 @@
             <form @submit.prevent="store">
                 <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
                     <text-input v-model="form.nama_kategori" :error="form.errors.nama_kategori"
-                                class="pr-6 pb-8 w-full lg:w-1/2" label="Nama Kategori"/>
+                                class="pr-6 w-full lg:w-1/2" label="Nama Kategori"/>
                 </div>
-                <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
-                    <text-input v-model="form.min_harga" :error="form.errors.min_harga"
-                                class="pr-6 pb-8 w-full lg:w-1/2" label="Min Harga"/>
-                    <text-input v-model="form.max_harga" :error="form.errors.max_harga"
-                                class="pr-6 pb-8 w-full lg:w-1/2" label="Max Harga"/>
+                <div class="p-8 -mr-6 mb-8">
+                    <div class="flex gap-4 items-center mb-3">
+                        <h4 class="font-bold">Daftar Sub Kategori</h4>
+                        <button type="button" class="btn-green btn-sm" @click="addMoreSubCategory()"
+                        >+ Tambah Sub Kategori
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4" v-for="(subcategory, index) in form.sub_category_list" :key="index">
+                        <text-input v-model="subcategory.nama_kategori" label="Nama Kategori"/>
+                        <text-input v-model="subcategory.min_harga" label="Min Harga"/>
+                        <text-input v-model="subcategory.max_harga" label="Max Harga"/>
+                            <a href="" v-if="index != 0" type="button" class="font-bold" style="color: red"  @click.prevent="removeSubCategory(index)"
+                            >Hapus
+                            </a>
+                    </div>
+
                 </div>
                 <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex justify-end items-center">
                     <loading-button :loading="form.processing" class="btn-green" type="submit">Buat Kategori
@@ -43,14 +54,30 @@ export default {
     remember: 'form',
     data() {
         return {
+
             form: this.$inertia.form({
+                sub_category_list : [
+                    {
+                        nama_kategori : '',
+                        min_harga : '',
+                        max_harga : ''
+                    }
+                ],
                 nama_kategori : null,
-                min_harga : null,
-                max_harga : null,
             }),
         }
     },
     methods: {
+        addMoreSubCategory(){
+          this.form.sub_category_list.push({
+                nama_kategori : '',
+                min_harga : '',
+                max_harga : ''
+          });
+        },
+        removeSubCategory(index){
+            this.form.sub_category_list.splice(index, 1);
+        },
         store() {
             this.form.post('/categories')
         },

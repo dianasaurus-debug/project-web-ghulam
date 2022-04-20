@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(KriteriaFuzzySeeder::class);
 //        $this->call(KriteriaFuzzyHargaCoba::class);
         $this->call(ProductCategorySeeder::class);
+        $this->call(SupplierSeeder::class);
+
     }
 }

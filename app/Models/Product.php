@@ -11,7 +11,7 @@ class Product extends Model
     protected $guarded = [];
     public function category()
     {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+        return $this->belongsTo(SubCategory::class, 'category_id', 'id');
     }
     public function criterias()
     {
@@ -30,6 +30,7 @@ class Product extends Model
     {
         return $this->belongsTo(LetakBarang::class, 'letak_id', 'id');
     }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

@@ -12,10 +12,22 @@
                                 class="pr-6 pb-8 w-full lg:w-1/2" label="Nama Barang"/>
                     <text-input v-model="form.stok" :error="form.errors.stok" class="pr-6 pb-8 w-full lg:w-1/2"
                                 label="Jumlah Stok"/>
-                    <select-input v-model="form.category_id" :error="form.errors.category_id"
+                    <select-input v-model="form.category_primary_id" :error="form.errors.category_primary_id"
                                   class="pr-6 pb-8 w-full lg:w-1/2" label="Kategori Barang">
                         <option :value="null">Pilih Kategori</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">
+                        <option v-for="category in categories" :key="category.id" :value="category">
+                            {{ category.nama_kategori }}
+                        </option>
+                    </select-input>
+                    <div v-if="form.category_primary_id==null" class=" pr-6 pb-8 w-full lg:w-1/2">
+                        <label class="form-label" >Sub Kategori Barang:</label>
+                        <select disabled class="form-select">
+                            <option :value="null">Pilih Sub Kategori</option>
+                        </select>
+                    </div>
+                    <select-input v-else v-model="form.category_id" :error="form.errors.category_id" class="pr-6 pb-8 w-full lg:w-1/2" label="Sub Kategori Barang">
+                        <option :value="null" disabled>Pilih Sub Kategori</option>
+                        <option v-for="category in form.category_primary_id.sub_categories" :key="category.id" :value="category.id">
                             {{ category.nama_kategori }}
                         </option>
                     </select-input>
@@ -76,6 +88,7 @@ export default {
     layout: Layout,
     props: {
         categories: Array,
+        sub_categories: Array,
         suppliers: Array,
         letak: Array
     },
@@ -91,6 +104,7 @@ export default {
                 stok: null,
                 letak_id : null,
                 category_id: null,
+                category_primary_id: null,
                 supplier_id: null,
                 gambar: null
             }),
@@ -99,7 +113,7 @@ export default {
     computed : {
         presentase_keuntungan() {
             if(this.form.harga_jual==null||this.form.harga_jual==0&&this.form.harga_beli==null||this.form.harga_beli==0){
-                return 0;
+                return null;
             } else {
                 return (((this.form.harga_jual-this.form.harga_beli)/this.form.harga_beli)*100).toFixed(2);
             }

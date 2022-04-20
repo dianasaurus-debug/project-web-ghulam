@@ -9,10 +9,9 @@ class ProductCategory extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
-    public function products()
+    public function sub_categories()
     {
-        return $this->hasMany(Product::class, 'category_id', 'id');
+        return $this->hasMany(SubCategory::class, 'category_id', 'id');
     }
     public function scopeOrderById($query)
     {

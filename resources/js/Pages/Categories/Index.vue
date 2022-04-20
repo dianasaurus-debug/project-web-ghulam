@@ -9,13 +9,12 @@
         <span class="hidden md:inline">Kategori</span>
       </inertia-link>
     </div>
-    <div class="bg-white rounded-md shadow overflow-x-auto">
+    <div class="bg-white rounded-md shadow overflow-x-auto overflow-y-auto">
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="px-6 pt-6 pb-4">ID</th>
           <th class="px-6 pt-6 pb-4">Nama</th>
-            <th class="px-6 pt-6 pb-4">Min harga</th>
-            <th class="px-6 pt-6 pb-4">Max harga</th>
+            <th class="px-6 pt-6 pb-4">Sub Kategori</th>
 
         </tr>
         <tr v-for="category in categories.data" :key="category.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
@@ -29,15 +28,10 @@
                 {{ category.nama_kategori }}
             </inertia-link>
           </td>
-            <td class="border-t">
-                <inertia-link class="px-6 py-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
-                    {{ category.min_harga }}
-                </inertia-link>
-            </td>
-            <td class="border-t">
-                <inertia-link class="px-6 py-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
-                    {{ category.max_harga }}
-                </inertia-link>
+            <td class="border-t px-6 py-4">
+                <ul class="list-disc" v-for="subcategory in category.sub_categories" :key="subcategory.id">
+                    <li>{{subcategory.nama_kategori}}</li>
+                </ul>
             </td>
           <td class="border-t w-px">
             <inertia-link class="px-4 flex items-center" :href="route('categories.edit', category.id)" tabindex="-1">
@@ -77,6 +71,7 @@ export default {
   },
   data() {
     return {
+
       form: {
         search: this.filters.search,
       },

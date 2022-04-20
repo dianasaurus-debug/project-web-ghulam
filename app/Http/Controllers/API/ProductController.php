@@ -22,6 +22,7 @@ class ProductController extends Controller
             try {
                 $all_products = Product::with('category')
                     ->with('criterias')
+                    ->with('cart')
                     ->get();
                 $data = array(
                     'status' => 'success',
@@ -39,11 +40,10 @@ class ProductController extends Controller
                 return response()->json($data);
             }
         }
-
         public function index_categories(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
         {
             try {
-                $all_categories = ProductCategory::get();
+                $all_categories = ProductCategory::with('sub_categories')->get();
                 $data = array(
                     'status' => 'success',
                     'message' => 'Berhasil menampilkan data kategori',
@@ -60,7 +60,6 @@ class ProductController extends Controller
                 return response()->json($data);
             }
         }
-
         public function product_detail(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
         {
             try {
@@ -84,7 +83,6 @@ class ProductController extends Controller
                 return response()->json($data);
             }
         }
-
         public function getRecommendation(Request $request){
             try {
                 $input_supplier = $request->criteria_supplier; //diisi id dari kriteria
@@ -98,6 +96,7 @@ class ProductController extends Controller
                 $used_inputs = array();
                 $products = Product::with('criterias.kriteria.kriteria_fuzzy')
                     ->where('category_id', $input_kategori)
+                    ->with('cart')
                     ->get();
                 $array_of_ids = [];
                 $i=0;

@@ -25,7 +25,7 @@ class CreateProductsTable extends Migration
             $table->string('harga_jual');
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
             $table->bigInteger('supplier_id')->unsigned();
-            $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('sub_categories')->onDelete('cascade');
             $table->bigInteger('category_id')->unsigned();
             $table->foreign('letak_id')->references('id')->on('letak_barangs')->onDelete('cascade');
             $table->bigInteger('letak_id')->unsigned();

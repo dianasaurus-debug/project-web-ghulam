@@ -77,6 +77,7 @@ class AuthController extends Controller
         }
         try {
             $user = User::where('email', $request['email'])
+                ->with('saldo')
                 ->where('role', 3)
                 ->firstOrFail();
             if($user->is_verified == null){

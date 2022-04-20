@@ -6,6 +6,7 @@ use App\Models\Kriteria;
 use App\Models\KriteriaFuzzy;
 use App\Models\LetakBarang;
 use App\Models\ProductCategory;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -19,6 +20,7 @@ class ProductCategoryController extends Controller
     public function index()
     {
         $all_categories = ProductCategory::orderById()
+            ->with('sub_categories')
             ->filter(\Illuminate\Support\Facades\Request::only(['search']))
             ->paginate(10)
             ->withQueryString();
@@ -49,38 +51,42 @@ class ProductCategoryController extends Controller
         try {
             $request->validate([
                 'nama_kategori' => 'required|string',
-                'min_harga' => 'required',
-                'max_harga' => 'required'
+                'sub_category_list' => 'required'
             ]);
 
-            $arr = range($request->min_harga, $request->max_harga);
-            $new_arr = array_chunk($arr, ceil(count($arr) / 5));
-            $arr_replace = array();
             $fuzzy_nums = config('constants.bobot');
             $kriteria_word = config('constants.kriteria_harga');
             $kategori = ProductCategory::create([
-                'min_harga' => $request->min_harga,
-                'max_harga' => $request->max_harga,
                 'nama_kategori' => $request->nama_kategori,
             ]);
-            for ($i = 0; $i < count($new_arr); $i++) {
-                $kriteria = Kriteria::create([
-                    'kode' => 'C3',
-                    'nama' => 'Harga',
-                    'satuan' => 'RP',
-                    'keterangan' => 'cost',
+            foreach($request->sub_category_list as $subcategory_field){
+                $subcategory = SubCategory::create([
                     'category_id' => $kategori->id,
-                    'himpunan' => $kriteria_word[$i],
-                    'interval_min' => min($new_arr[$i]),
-                    'interval_max' => max($new_arr[$i]),
+                    'min_harga' => $subcategory_field['min_harga'],
+                    'max_harga' => $subcategory_field['max_harga'],
+                    'nama_kategori' => $subcategory_field['nama_kategori'],
                 ]);
-                KriteriaFuzzy::create(
-                    [
-                        'id_kriteria' => $kriteria->id,
-                        'fuzzy_num_a' => $fuzzy_nums[$i][0],
-                        'fuzzy_num_b' => $fuzzy_nums[$i][1],
-                        'fuzzy_num_c' => $fuzzy_nums[$i][2],
+                $arr = range($subcategory->min_harga, $subcategory->max_harga);
+                $new_arr = array_chunk($arr, ceil(count($arr) / 5));
+                for ($i = 0; $i < count($new_arr); $i++) {
+                    $kriteria = Kriteria::create([
+                        'kode' => 'C3',
+                        'nama' => 'Harga',
+                        'satuan' => 'RP',
+                        'keterangan' => 'cost',
+                        'category_id' => $subcategory->id,
+                        'himpunan' => $kriteria_word[$i],
+                        'interval_min' => min($new_arr[$i]),
+                        'interval_max' => max($new_arr[$i]),
                     ]);
+                    KriteriaFuzzy::create(
+                        [
+                            'id_kriteria' => $subcategory->id,
+                            'fuzzy_num_a' => $fuzzy_nums[$i][0],
+                            'fuzzy_num_b' => $fuzzy_nums[$i][1],
+                            'fuzzy_num_c' => $fuzzy_nums[$i][2],
+                        ]);
+                }
             }
             return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan!');
         } catch (\Exception $e) {

@@ -7,6 +7,7 @@ use App\Models\LetakBarang;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductKriteria;
+use App\Models\SubCategory;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -32,7 +33,7 @@ class ProductController extends Controller
             ->paginate(10)
             ->withQueryString();
         return Inertia::render('Products/Index', [
-            'categories' => ProductCategory::orderBy('nama_kategori')
+            'categories' => SubCategory::orderBy('nama_kategori')
                 ->get()
                 ->map
                 ->only('id', 'nama_kategori'),
@@ -49,10 +50,8 @@ class ProductController extends Controller
     public function create()
     {
         return Inertia::render('Products/Create', [
-            'categories' => ProductCategory::orderBy('nama_kategori')
-                ->get()
-                ->map
-                ->only('id', 'nama_kategori'),
+            'categories' => ProductCategory::with('sub_categories')->orderBy('nama_kategori')
+                ->get(),
             'letak' => LetakBarang::orderBy('name')
                 ->get()
                 ->map
@@ -194,10 +193,8 @@ class ProductController extends Controller
                 'suppliers' => Supplier::get()
                     ->map
                     ->only('id', 'nama_supplier'),
-                'categories' => ProductCategory::orderBy('nama_kategori')
-                    ->get()
-                    ->map
-                    ->only('id', 'nama_kategori'),
+                'categories' => ProductCategory::with('sub_categories')->orderBy('nama_kategori')
+
             ]);
         } catch (\Exception $e) {
             return redirect()->route('products.index')->with('error', 'Terjadi kesalahan! Error : ' . $e->getMessage());
