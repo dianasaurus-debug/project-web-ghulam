@@ -343,7 +343,7 @@ class ProductController extends Controller
     public function index_category()
     {
         return Inertia::render('Rekomendasi/Index', [
-            'categories' => ProductCategory::all(),
+            'categories' => ProductCategory::with('sub_categories')->get(),
             'input_bobot' => config('constants.label_bobot'),
         ]);
     }
