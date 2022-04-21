@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\AuthController as APIAuthController;
 use \App\Http\Controllers\API\CartController;
+use \App\Http\Controllers\API\OrderController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,6 +29,10 @@ Route::get('/products/categories', [ProductController::class, 'index_categories'
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', [APIAuthController::class, 'profile']);
+    Route::post('/order/create', [OrderController::class, 'create_order']);
+    Route::get('/order/all', [OrderController::class, 'all_order']);
+    Route::get('/order/detail/{id}', [OrderController::class, 'order_by_id']);
+
 //    Route::put('/update/profile', [APIAuthController::class, 'update']);
     Route::post('/logout', [APIAuthController::class, 'logout']);
     Route::get('/cart/all', [CartController::class, 'index']);
