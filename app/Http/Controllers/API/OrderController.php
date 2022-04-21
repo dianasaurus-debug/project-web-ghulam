@@ -84,10 +84,11 @@ class OrderController extends Controller
                         'updated_at' => Carbon::now()]);
                 }
                 $order->update(['total' => $total_semua_products]);
+                $order_data = Order::where('id', $order->id)->with('products')->first();
                 $data = array(
                     'success' => true,
                     'message' => 'Berhasil menambahkan data order',
-                    'data' => $order,
+                    'data' => $order_data,
                 );
                 return response()->json($data,200);
             } catch (\Exception $exception) {
