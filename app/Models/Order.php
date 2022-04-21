@@ -12,7 +12,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class)->withPivot('jumlah', 'total');;
+        return $this->belongsToMany(Product::class)->with('criterias')->withPivot('jumlah', 'total');;
     }
     public function user()
     {
