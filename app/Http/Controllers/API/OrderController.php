@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Credit;
 use App\Models\Order;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +45,51 @@ class OrderController extends Controller
                 'message' => 'Berhasil menampilkan data order',
                 'data' => $order,
             );
+            return response()->json($data, 200);
+        } catch (\Exception $exception) {
+            $data = array(
+                [
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan : '.$exception->getMessage()
+                ]
+            );
+            return response()->json($data, 400);
+        }
+    }
+    public function pay_order($id){
+        try {
+            $order = Order::where('id', $id)
+                ->where('user_id', Auth::id())
+                ->first();
+            $user_data = User::where('id', Auth::id())->with('saldo')->first();
+            if($order) {
+                if($user_data->saldo!=null){
+                    if($order->total<=$user_data->saldo->jumlah){
+                        $saldo = Credit::where('id', $user_data->saldo->id)->first();
+                        $saldo->update(['jumlah' => $saldo->jumlah-$order->total]);
+                        $order->update(['status' => 1]);
+                        $data = array(
+                            'success' => true,
+                            'message' => 'Berhasil membayar pesanan',
+                            'data' => $order,
+                        );
+                    } else {
+                        $data = array(
+                            'success' => false,
+                            'message' => 'Oops! saldo Anda tidak cukup!',
+                            'data' => $order,
+                        );
+                    }
+                } else {
+                    $data = array(
+                        'success' => false,
+                        'message' => 'Anda harus mengisi saldo terlebih dahulu untuk membeli',
+                        'data' => $order,
+                    );
+                }
+
+            }
+
             return response()->json($data, 200);
         } catch (\Exception $exception) {
             $data = array(

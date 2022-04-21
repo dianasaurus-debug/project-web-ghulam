@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/order/create', [OrderController::class, 'create_order']);
     Route::get('/order/all', [OrderController::class, 'all_order']);
     Route::get('/order/detail/{id}', [OrderController::class, 'order_by_id']);
+    Route::get('/order/pay/{id}', [OrderController::class, 'pay_order']);
 
 //    Route::put('/update/profile', [APIAuthController::class, 'update']);
     Route::post('/logout', [APIAuthController::class, 'logout']);
