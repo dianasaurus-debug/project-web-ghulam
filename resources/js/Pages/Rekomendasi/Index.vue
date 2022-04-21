@@ -6,19 +6,19 @@
                     <h1 class="text-center font-bold text-3xl">Masukkan parameter</h1>
                     <div class="mx-auto mt-6 w-24 border-b-2" />
                     <select-input v-model="form.category_primary_id" :error="form.errors.category_primary_id"
-                                  class="pr-6 pb-8 w-full lg:w-1/2" label="Kategori Barang">
+                                  class="mt-6" label="Kategori Barang">
                         <option :value="null">Pilih Kategori</option>
                         <option v-for="category in categories" :key="category.id" :value="category">
                             {{ category.nama_kategori }}
                         </option>
                     </select-input>
-                    <div v-if="form.category_primary_id==null" class=" pr-6 pb-8 w-full lg:w-1/2">
+                    <div v-if="form.category_primary_id==null" class="mt-6">
                         <label class="form-label" >Sub Kategori Barang:</label>
                         <select disabled class="form-select">
                             <option :value="null">Pilih Sub Kategori</option>
                         </select>
                     </div>
-                    <select-input v-else v-model="form.category_id" :error="form.errors.category_id" class="pr-6 pb-8 w-full lg:w-1/2" label="Sub Kategori Barang">
+                    <select-input v-else v-model="form.category_id" :error="form.errors.category_id" class="mt-6" label="Sub Kategori Barang">
                         <option :value="null" disabled>Pilih Sub Kategori</option>
                         <option v-for="category in form.category_primary_id.sub_categories" :key="category.id" :value="category.id">
                             {{ category.nama_kategori }}
