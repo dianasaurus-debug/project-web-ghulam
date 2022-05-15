@@ -14,7 +14,7 @@ class CartController extends Controller
     public function index()
     {
         try {
-            $all_carts = Cart::with('product.category', 'product.criterias')
+            $all_carts = Cart::with('product.category.main_category', 'product.criterias')
                 ->where('user_id', Auth::id())
                 ->get();
 

@@ -156,5 +156,8 @@ class ProductController extends Controller
         public function rate_product(Request $request, $id){
 
         }
+        public function add_to_wishlist(Request $request, $id){
+
+        }
 
 }

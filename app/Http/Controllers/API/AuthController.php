@@ -31,12 +31,14 @@ class AuthController extends Controller
             if($user){
                 $data = [
                     'success' => false,
+                    'is_verified' => false,
                     'message' => 'Mohon verifikasi E-Mail Anda terlebih dahulu',
                 ];
                 return response()->json($data);
             }
             $data = [
                 'success' => false,
+                'is_verified' => true,
                 'message' => 'Akun sudah ada',
             ];
             return response()->json($data);
@@ -56,11 +58,13 @@ class AuthController extends Controller
 
             $data = [
                 'success' => true,
+                'is_verified' => false,
                 'message' => 'Mohon cek email Anda untuk kode OTP',
             ];
         } catch (\Exception $exception){
             $data = [
                 'success' => false,
+                'is_verified' => false,
                 'message' => 'Terdapat eror! '.$exception->getMessage(),
             ];
         }
