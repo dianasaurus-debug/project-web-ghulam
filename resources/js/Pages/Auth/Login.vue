@@ -1,7 +1,6 @@
 <template>
   <div class="p-6 bg-green-800 min-h-screen flex justify-center items-center">
     <div class="w-full max-w-md">
-      <logo class="block mx-auto w-full max-w-xs fill-white" height="50" />
       <form class="mt-8 bg-white rounded-lg shadow-xl overflow-hidden" @submit.prevent="login">
         <div class="px-10 py-12">
           <h1 class="text-center font-bold text-3xl">Selamat Datang!</h1>
@@ -36,8 +35,8 @@ export default {
   data() {
     return {
       form: this.$inertia.form({
-        email: 'johndoe@example.com',
-        password: 'secret',
+        email: '',
+        password: '',
         remember: false,
       }),
     }

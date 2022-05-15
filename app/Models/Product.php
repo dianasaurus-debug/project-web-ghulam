@@ -13,7 +13,7 @@ class Product extends Model
     {
         return $this->belongsTo(SubCategory::class, 'category_id', 'id');
     }
-    public function criterias()
+     public function criterias()
     {
         return $this->hasMany(ProductKriteria::class, 'product_id', 'id');
     }

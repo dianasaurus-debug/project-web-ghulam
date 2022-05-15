@@ -81,7 +81,7 @@ class ProductCategoryController extends Controller
                     ]);
                     KriteriaFuzzy::create(
                         [
-                            'id_kriteria' => $subcategory->id,
+                            'id_kriteria' => $kriteria->id,
                             'fuzzy_num_a' => $fuzzy_nums[$i][0],
                             'fuzzy_num_b' => $fuzzy_nums[$i][1],
                             'fuzzy_num_c' => $fuzzy_nums[$i][2],
@@ -115,7 +115,11 @@ class ProductCategoryController extends Controller
     {
         try {
             $kategori = ProductCategory::where('id', $id)->first();
+            $sub_categories = SubCategory::where('category_id', $kategori->id)
+                ->select(['id','nama_kategori', 'min_harga', 'max_harga'])
+                ->get();
             return Inertia::render('Categories/Edit', [
+                'sub_categories' => $sub_categories,
                 'categories' => $kategori,
             ]);
         } catch (\Exception $e) {
@@ -132,31 +136,94 @@ class ProductCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $kategori = ProductCategory::where('id', $id)->first();
+//        try {
             $request->validate([
                 'nama_kategori' => 'required|string',
-                'min_harga' => 'required',
-                'max_harga' => 'required'
+                'sub_category_list' => 'required'
             ]);
+
+            $fuzzy_nums = config('constants.bobot');
+            $kriteria_word = config('constants.kriteria_harga');
+            $kategori = ProductCategory::where('id', $id)
+                ->with('sub_categories')->first();
+            $list_of_sub_ids = [];
+            $list_of_used_id = [];
+            for ($i=0;$i<count($kategori->sub_categories);$i++){
+                $list_of_sub_ids[$i] = $kategori->sub_categories[$i]->id;
+            }
             $kategori->update([
                 'nama_kategori' => $request->nama_kategori,
-                'max_harga' => $request->max_harga,
-                'min_harga' => $request->min_harga,
             ]);
-            $arr = range($request->min_harga, $request->max_harga);
-            $new_arr = array_chunk($arr, ceil(count($arr) / 5));
-            for ($i = 0; $i < count($new_arr); $i++) {
-                $kriteria = Kriteria::where('category_id', $kategori->id)->get();
-                $kriteria[$i]->update([
-                    'interval_min' => min($new_arr[$i]),
-                    'interval_max' => max($new_arr[$i]),
-                ]);
+
+            foreach($request->sub_category_list as $subcategory_field){
+                if($subcategory_field['id']!=null){
+                    if (in_array($subcategory_field['id'], $list_of_sub_ids)) {
+                        array_push($list_of_used_id, $subcategory_field['id']);
+                    }
+                    $subcategory = SubCategory::where('id', $subcategory_field['id'])->first();
+                    $subcategory->update([
+                        'min_harga' => $subcategory_field['min_harga'],
+                        'max_harga' => $subcategory_field['max_harga'],
+                        'nama_kategori' => $subcategory_field['nama_kategori'],
+                    ]);
+                    $arr = range($subcategory->min_harga, $subcategory->max_harga);
+                    $new_arr = array_chunk($arr, ceil(count($arr) / 5));
+                    for ($i = 0; $i < count($new_arr); $i++) {
+                        $kriteria = Kriteria::where('category_id', $subcategory->id)
+                            ->where('himpunan', $kriteria_word[$i])
+                            ->first();
+                        $kriteria->update([
+                            'interval_min' => min($new_arr[$i]),
+                            'interval_max' => max($new_arr[$i]),
+                        ]);
+                    }
+                } else {
+                    $subcategory = SubCategory::create([
+                        'category_id' => $kategori->id,
+                        'min_harga' => $subcategory_field['min_harga'],
+                        'max_harga' => $subcategory_field['max_harga'],
+                        'nama_kategori' => $subcategory_field['nama_kategori'],
+                    ]);
+                    $arr = range($subcategory->min_harga, $subcategory->max_harga);
+                    $new_arr = array_chunk($arr, ceil(count($arr) / 5));
+                    for ($i = 0; $i < count($new_arr); $i++) {
+                        $kriteria = Kriteria::create([
+                            'kode' => 'C3',
+                            'nama' => 'Harga',
+                            'satuan' => 'RP',
+                            'keterangan' => 'cost',
+                            'category_id' => $subcategory->id,
+                            'himpunan' => $kriteria_word[$i],
+                            'interval_min' => min($new_arr[$i]),
+                            'interval_max' => max($new_arr[$i]),
+                        ]);
+                        KriteriaFuzzy::create(
+                            [
+                                'id_kriteria' => $kriteria->id,
+                                'fuzzy_num_a' => $fuzzy_nums[$i][0],
+                                'fuzzy_num_b' => $fuzzy_nums[$i][1],
+                                'fuzzy_num_c' => $fuzzy_nums[$i][2],
+                            ]);
+                    }
+                }
             }
-            return redirect()->route('categories.index')->with('success', 'Kategori berhasil diupdate!');
-        } catch (\Exception $e) {
-            return redirect()->route('categories.index')->with('error', 'Kategori gagal diupdate! Error : ' . $e->getMessage());
-        }
+            $array_not_used = $differenceArray = array_diff($list_of_sub_ids, $list_of_used_id);
+            if(count($array_not_used)>0){
+                foreach ($array_not_used as $key => $value) {
+                    $subcategory = SubCategory::where('id', $value)->delete();
+                    $kriteria = Kriteria::where('category_id', $value)->get();
+                    foreach ($kriteria as $k){
+                        $k->delete();
+                        $kriteria_fuzzy = KriteriaFuzzy::where('id_kriteria', $k->id)->first();
+                        $kriteria_fuzzy->delete();
+                    }
+                }
+            }
+            return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan!');
+//        } catch (\Exception $e) {
+//            return redirect()->route('categories.index')->with('error', 'Kategori gagal ditambahkan! Error : ' . $e->getMessage());
+//        }
+
     }
 
     /**

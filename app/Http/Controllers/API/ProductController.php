@@ -20,7 +20,7 @@ class ProductController extends Controller
         public function index(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
         {
             try {
-                $all_products = Product::with('category')
+                $all_products = Product::with('category.main_category')
                     ->with('criterias')
                     ->with('cart')
                     ->get();
@@ -43,7 +43,8 @@ class ProductController extends Controller
         public function index_categories(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
         {
             try {
-                $all_categories = ProductCategory::with('sub_categories')->get();
+                $all_categories = ProductCategory::with('sub_categories')
+                    ->get();
                 $data = array(
                     'status' => 'success',
                     'message' => 'Berhasil menampilkan data kategori',
@@ -152,6 +153,8 @@ class ProductController extends Controller
                 return response()->json($data);
             }
         }
+        public function rate_product(Request $request, $id){
 
+        }
 
 }
