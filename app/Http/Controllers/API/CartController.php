@@ -48,9 +48,20 @@ class CartController extends Controller
         }
         try{
             $product = Product::where('id', $request->product_id)->first();
-            $is_in_cart = Cart::where('product_id', $product->id)->get();
+            $existing = Cart::where('product_id', $product->id)
+                ->where('user_id', Auth::id())
+                ->first();
             if($product){
-                if(count($is_in_cart)==0){
+                if($existing){
+                    $total_price = $request->jumlah * $product->harga_jual;
+                    $cart = Cart::update([
+                        'jumlah' => $request->jumlah,
+                        'total' => $total_price,
+                        'product_id' => $product->id,
+                        'user_id' => Auth::id()
+                    ]);
+                }
+                else {
                     $total_price = $request->jumlah * $product->harga_jual;
                     $cart = Cart::create([
                         'jumlah' => $request->jumlah,
