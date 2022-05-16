@@ -31,7 +31,7 @@ class ProductController extends Controller
                     'message' => 'Berhasil menampilkan data products',
                     'data' => $all_products,
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             } catch (\Exception $exception) {
                 $data = array(
                     [
@@ -39,7 +39,7 @@ class ProductController extends Controller
                         'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                     ]
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             }
         }
         public function index_categories(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
@@ -52,7 +52,7 @@ class ProductController extends Controller
                     'message' => 'Berhasil menampilkan data kategori',
                     'data' => $all_categories,
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             } catch (\Exception $exception) {
                 $data = array(
                     [
@@ -60,7 +60,7 @@ class ProductController extends Controller
                         'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                     ]
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             }
         }
         public function product_detail(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
@@ -75,7 +75,7 @@ class ProductController extends Controller
                     'message' => 'Berhasil menampilkan data product',
                     'data' => $product,
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             } catch (\Exception $exception) {
                 $data = array(
                     [
@@ -83,7 +83,7 @@ class ProductController extends Controller
                         'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                     ]
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             }
         }
         public function getRecommendation(Request $request){
@@ -144,7 +144,7 @@ class ProductController extends Controller
                     'message' => 'Berhasil menampilkan data rekomendasi',
                     'data' => $sorted_products,
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             } catch (\Exception $exception) {
                 $data = array(
                     [
@@ -152,7 +152,7 @@ class ProductController extends Controller
                         'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                     ]
                 );
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             }
         }
         public function rate_product(Request $request, $id){
@@ -183,7 +183,7 @@ class ProductController extends Controller
                     'message' => 'Terdapat eror! '.$exception->getMessage(),
                 ];
             }
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
 
         }
 

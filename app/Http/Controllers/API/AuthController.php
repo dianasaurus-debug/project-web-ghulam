@@ -34,14 +34,15 @@ class AuthController extends Controller
                     'is_verified' => false,
                     'message' => 'Mohon verifikasi E-Mail Anda terlebih dahulu',
                 ];
-                return response()->json($data);
+                return response()->json($data,200, [], JSON_NUMERIC_CHECK);
             }
             $data = [
                 'success' => false,
                 'is_verified' => true,
                 'message' => 'Akun sudah ada',
             ];
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+
 
         }
         try{
@@ -69,7 +70,7 @@ class AuthController extends Controller
             ];
         }
 
-        return response()->json($data);
+        return response()->json($data,200, [], JSON_NUMERIC_CHECK);
     }
 
     public function login(Request $request)
@@ -141,7 +142,7 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Kode OTP tidak boleh kosong!',
             ];
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
         }
         try {
             $user = User::where('otp_code', $request->kode_otp)
@@ -196,7 +197,7 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'E-Mail tidak boleh kosong!',
             ];
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
         }
         try {
             $user = User::where('email', $request->email)

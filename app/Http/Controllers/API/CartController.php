@@ -44,7 +44,7 @@ class CartController extends Controller
                 'success' => false,
                 'message' => 'Akun sudah ada atau pastikan data yang Anda masukkan benar',
             ];
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
         }
         try{
             $product = Product::where('id', $request->product_id)->first();
@@ -76,7 +76,7 @@ class CartController extends Controller
             ];
         }
 
-        return response()->json($data);
+        return response()->json($data,200, [], JSON_NUMERIC_CHECK);
     }
     public function remove($id)
     {
@@ -97,7 +97,7 @@ class CartController extends Controller
                 );
             }
 
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
         } catch (\Exception $exception) {
             $data = array(
                 [
@@ -105,7 +105,7 @@ class CartController extends Controller
                     'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                 ]
             );
-            return response()->json($data);
+            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
         }
     }
     public function scan_product($id) {
@@ -130,7 +130,7 @@ class CartController extends Controller
             ];
         }
 
-        return response()->json($data);
+        return response()->json($data,200, [], JSON_NUMERIC_CHECK);
     }
     public function remove_product($id) {
         try{
@@ -154,7 +154,7 @@ class CartController extends Controller
             ];
         }
 
-        return response()->json($data);
+        return response()->json($data,200, [], JSON_NUMERIC_CHECK);
     }
 
 }
