@@ -21,7 +21,7 @@ class WishlistController extends Controller
                 'message' => 'Berhasil menampilkan data wishlist',
                 'data' => $all_wishlist,
             );
-            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+            return response()->json($data);
         } catch (\Exception $exception) {
             $data = array(
                 [
@@ -29,7 +29,7 @@ class WishlistController extends Controller
                     'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                 ]
             );
-            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+            return response()->json($data);
         }
     }
     public function add_to_wishlist($id) {
@@ -72,7 +72,7 @@ class WishlistController extends Controller
             ];
         }
 
-        return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+        return response()->json($data);
     }
     public function remove($id)
     {
@@ -92,7 +92,7 @@ class WishlistController extends Controller
                     'data' => $wishlist,
                 );
             }
-            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+            return response()->json($data);
         } catch (\Exception $exception) {
             $data = array(
                 [
@@ -100,7 +100,7 @@ class WishlistController extends Controller
                     'message' => 'Terjadi kesalahan : '.$exception->getMessage()
                 ]
             );
-            return response()->json($data,200, [], JSON_NUMERIC_CHECK);
+            return response()->json($data);
         }
     }
 }
