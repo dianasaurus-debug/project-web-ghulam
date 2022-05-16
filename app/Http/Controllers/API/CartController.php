@@ -17,7 +17,6 @@ class CartController extends Controller
             $all_carts = Cart::with('product.category.main_category', 'product.criterias')
                 ->where('user_id', Auth::id())
                 ->get();
-
             $data = array(
                 'success' => true,
                 'message' => 'Berhasil menampilkan data cart',

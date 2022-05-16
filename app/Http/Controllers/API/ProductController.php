@@ -8,7 +8,9 @@ use App\Models\KriteriaFuzzy;
 use App\Models\Product;
 use App\Models\ProductKriteria;
 use App\Models\ProductCategory;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -156,7 +158,32 @@ class ProductController extends Controller
         public function rate_product(Request $request, $id){
 
         }
-        public function add_to_wishlist(Request $request, $id){
+        public function is_product_in_wishlist($id){
+            try{
+                $product = Product::where('id', $id)->first();
+                if($product){
+                    $existing = Wishlist::where('product_id', $product->id)
+                        ->where('user_id', Auth::id())
+                        ->first();
+                        $data = [
+                            'success' => true,
+                            'is_exist' => $existing!=null ? true : false,
+                            'message' => 'Product sudah ditampilakn di wishlist',
+                        ];
+
+                } else {
+                    $data = [
+                        'success' => false,
+                        'message' => 'Product tidak ditemukan',
+                    ];
+                }
+            } catch (\Exception $exception){
+                $data = [
+                    'success' => false,
+                    'message' => 'Terdapat eror! '.$exception->getMessage(),
+                ];
+            }
+            return response()->json($data);
 
         }
 

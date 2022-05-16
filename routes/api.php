@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\AuthController as APIAuthController;
 use \App\Http\Controllers\API\CartController;
 use \App\Http\Controllers\API\OrderController;
+use \App\Http\Controllers\API\WishlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,13 @@ Route::get('/products/categories', [ProductController::class, 'index_categories'
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::prefix('wishlist')->name('wishlist.')->group(static function(){
+            Route::get('add/{id}', [WishlistController::class,'add_to_wishlist']);
+            Route::get('all', [WishlistController::class,'index_wishlist']);
+            Route::get('remove/{id}',  [WishlistController::class,'remove']);
+    });
+    Route::get('/wishlist/exist/{id}', [ProductController::class, 'is_product_in_wishlist']);
+
     Route::get('/profile', [APIAuthController::class, 'profile']);
     Route::post('/order/create', [OrderController::class, 'create_order']);
     Route::get('/order/all', [OrderController::class, 'all_order']);
