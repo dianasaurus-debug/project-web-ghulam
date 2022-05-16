@@ -136,7 +136,7 @@ class ProductCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-//        try {
+        try {
             $request->validate([
                 'nama_kategori' => 'required|string',
                 'sub_category_list' => 'required'
@@ -210,19 +210,25 @@ class ProductCategoryController extends Controller
             $array_not_used = $differenceArray = array_diff($list_of_sub_ids, $list_of_used_id);
             if(count($array_not_used)>0){
                 foreach ($array_not_used as $key => $value) {
-                    $subcategory = SubCategory::where('id', $value)->delete();
-                    $kriteria = Kriteria::where('category_id', $value)->get();
-                    foreach ($kriteria as $k){
-                        $k->delete();
-                        $kriteria_fuzzy = KriteriaFuzzy::where('id_kriteria', $k->id)->first();
-                        $kriteria_fuzzy->delete();
+                    $subcategory = SubCategory::where('id', $value)
+                        ->with('product')
+                        ->first();
+                    if(count($subcategory->product)>0){
+                        $kriteria = Kriteria::where('category_id', $value)->get();
+                        foreach ($kriteria as $k){
+                            $k->delete();
+                            $kriteria_fuzzy = KriteriaFuzzy::where('id_kriteria', $k->id)->first();
+                            $kriteria_fuzzy->delete();
+                        }
+                    } else {
+                        return redirect()->route('categories.index')->with('error', 'Gagal update kategori karena ada kategori yg bergantung');
                     }
                 }
             }
             return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan!');
-//        } catch (\Exception $e) {
-//            return redirect()->route('categories.index')->with('error', 'Kategori gagal ditambahkan! Error : ' . $e->getMessage());
-//        }
+        } catch (\Exception $e) {
+            return redirect()->route('categories.index')->with('error', 'Kategori gagal ditambahkan! Error : ' . $e->getMessage());
+        }
 
     }
 
