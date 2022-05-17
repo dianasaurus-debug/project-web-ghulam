@@ -54,7 +54,7 @@ class CartController extends Controller
             if($product){
                 if($existing){
                     $total_price = $request->jumlah * $product->harga_jual;
-                    $cart = Cart::update([
+                    $existing->update([
                         'jumlah' => $request->jumlah,
                         'total' => $total_price,
                         'product_id' => $product->id,
