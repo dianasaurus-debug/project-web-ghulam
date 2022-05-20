@@ -42,7 +42,7 @@
                 <tr v-for="order in orders.data" :key="order.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                     <td class="border-t">
                         <inertia-link class="px-6 py-4 flex items-center focus:text-green-500" :href="route('orders.index')">
-                            {{ order.user.first_name }}
+                            {{ order.user.first_name }} {{ order.user.last_name }}
                         </inertia-link>
                     </td>
                     <td class="border-t">
