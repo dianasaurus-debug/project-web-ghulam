@@ -25,6 +25,12 @@
       </inertia-link>
     </div>
       <div class="mb-4">
+          <inertia-link class="flex items-center group py-3" :href="route('orders.index')">
+              <icon name="store-front" class="w-4 h-4 mr-2" :class="isUrl('orders') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />
+              <div :class="isUrl('orders') ? 'text-white' : 'text-green-300 group-hover:text-white'">Order</div>
+          </inertia-link>
+      </div>
+      <div class="mb-4">
           <inertia-link class="flex items-center group py-3" :href="route('credits.index')">
               <icon name="store-front" class="w-4 h-4 mr-2" :class="isUrl('credits') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />
               <div :class="isUrl('credits') ? 'text-white' : 'text-green-300 group-hover:text-white'">Saldo</div>
@@ -48,12 +54,7 @@
               <div :class="isUrl('rekomendasi') ? 'text-white' : 'text-green-300 group-hover:text-white'">Rekomendasi</div>
           </inertia-link>
       </div>
-<!--    <div class="mb-4">-->
-<!--      <inertia-link class="flex items-center group py-3" :href="route('reports')">-->
-<!--        <icon name="printer" class="w-4 h-4 mr-2" :class="isUrl('reports') ? 'fill-white' : 'fill-green-400 group-hover:fill-white'" />-->
-<!--        <div :class="isUrl('reports') ? 'text-white' : 'text-green-300 group-hover:text-white'">Reports</div>-->
-<!--      </inertia-link>-->
-<!--    </div>-->
+
   </div>
 </template>
 

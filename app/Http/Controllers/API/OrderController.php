@@ -16,8 +16,8 @@ class OrderController extends Controller
     public function all_order(Request $request){
         try {
             $all_orders = Order::with('products')
-              ->where('user_id', Auth::id())
-              ->get();
+                ->where('user_id', Auth::id())
+                ->get();
             $data = array(
                 'success' => true,
                 'message' => 'Berhasil menampilkan data order',

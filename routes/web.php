@@ -10,7 +10,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserCreditsController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\LetakBarangController;
-
+use App\Http\Controllers\OrderController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('users/{user}', [UsersController::class, 'update'])
         ->name('users.update');
     Route::resource('products', ProductController::class);
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('credits', [UserCreditsController::class, 'index'])->name('credits.index');
     Route::post('credits', [UserCreditsController::class, 'store'])->name('credits.store');
     Route::get('credits/create', [UserCreditsController::class, 'create'])->name('credits.create');

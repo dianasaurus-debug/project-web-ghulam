@@ -91,7 +91,6 @@ return [
             'prefix_indexes' => true,
             'options' => array(
                 PDO::ATTR_STRINGIFY_FETCHES => false,
-                PDO::SQLSRV_ATTR_FETCHES_NUMERIC_TYPE => true
             )
         ],
 
